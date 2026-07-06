@@ -459,11 +459,12 @@
         .fab:active {
             transform: scale(0.95);
         }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
+        @keyframes blink-fill {
+            0%, 100% { opacity: 1; fill: transparent; }
+            50% { opacity: 0.5; fill: currentColor; }
         }
-        .spinning {
-            animation: spin 1s linear infinite;
+        .blinking {
+            animation: blink-fill 1s ease-in-out infinite;
         }
         .gps-active {
             color: var(--primary) !important;
@@ -1229,7 +1230,11 @@
                 return;
             }
 
-            gpsIcon.classList.add('spinning');
+            if (gpsIcon.classList.contains('blinking')) {
+                return;
+            }
+
+            gpsIcon.classList.add('blinking');
             
             navigator.geolocation.getCurrentPosition((position) => {
                 const userLat = position.coords.latitude;
@@ -1242,7 +1247,7 @@
                 }).filter(market => market.distance <= 20)
                   .sort((a, b) => a.distance - b.distance);
 
-                gpsIcon.classList.remove('spinning');
+                gpsIcon.classList.remove('blinking');
                 gpsBtn.classList.add('gps-active');
                 showOnlyNearby = true;
                 
@@ -1257,7 +1262,7 @@
                 
                 filterAndRender();
             }, (error) => {
-                gpsIcon.classList.remove('spinning');
+                gpsIcon.classList.remove('blinking');
                 alert('위치 정보를 가져오는 데 실패했습니다. 위치 권한을 허용해주세요.');
             }, {
                 enableHighAccuracy: true,
@@ -1674,7 +1679,6 @@
                         </div>
                         <div class="badge-group" style="align-items: center;">
                             <span class="weather-info" id="weather-badge-${i}" style="display:none;"></span>
-                            ${market.distance !== undefined ? `<span class="badge badge-primary" style="background:#4A90E2; border:1px solid #4A90E2;">📍 ${market.distance.toFixed(1)}km</span>` : ''}
                             ${categoryBadge}
                             ${opnBadge}
                         </div>
@@ -1689,9 +1693,12 @@
                         </div>
                     </div>
 
-                    <div class="expand-indicator">
-                        <span>자세히 보기</span>
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                    <div class="expand-indicator" style="display: flex; justify-content: space-between; align-items: center; padding: 0 4px;">
+                        ${market.distance !== undefined ? `<span style="color:var(--primary); font-weight:700; font-size:13px; letter-spacing:-0.5px;">📍 ${market.distance.toFixed(1)}km</span>` : '<span></span>'}
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <span class="indicator-text">자세히 보기</span>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                        </div>
                     </div>
                     <div class="card-details">
                         <div class="market-meta-grid">
@@ -1768,7 +1775,7 @@
                 card.addEventListener('click', function(e) {
                     if (e.target.closest('a, button, .favorite-btn, .brand-tag, .address-actions, .action-icons')) return;
                     card.classList.toggle('expanded');
-                    const indicatorText = card.querySelector('.expand-indicator span');
+                    const indicatorText = card.querySelector('.indicator-text');
                     if (card.classList.contains('expanded')) {
                         indicatorText.textContent = '접기';
                     } else {
