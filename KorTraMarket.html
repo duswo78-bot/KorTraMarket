@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>전국 전통시장 스마트 디렉토리</title>
+    <!-- SVG Favicon: Giwa Roof + Taegeuk -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M 10 7 Q 32 11 54 7 Q 58 18 64 24 L 0 24 Q 6 18 10 7 Z' fill='%230a2d5c'/%3E%3Cpath d='M 1 24 A 3 3 0 0 1 7 24 A 3 3 0 0 1 13 24 A 3 3 0 0 1 19 24 A 3 3 0 0 1 25 24 A 3 3 0 0 1 31 24 A 3 3 0 0 1 37 24 A 3 3 0 0 1 43 24 A 3 3 0 0 1 49 24 A 3 3 0 0 1 55 24 A 3 3 0 0 1 61 24' fill='none' stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round'/%3E%3Crect x='2' y='24' width='60' height='4' fill='%230a2d5c'/%3E%3Crect x='14' y='28' width='6' height='22' fill='%230a2d5c'/%3E%3Crect x='44' y='28' width='6' height='22' fill='%230a2d5c'/%3E%3Crect x='10' y='50' width='14' height='4' fill='%230a2d5c'/%3E%3Crect x='40' y='50' width='14' height='4' fill='%230a2d5c'/%3E%3Ccircle cx='32' cy='39' r='22' fill='%23ffffff'/%3E%3Cg transform='rotate(34 32 39)'%3E%3Ccircle cx='32' cy='39' r='21' fill='%230047A0'/%3E%3Cpath d='M 11 39 a 21 21 0 1 1 42 0 a 10.5 10.5 0 0 0 -21 0 a 10.5 10.5 0 0 1 -21 0' fill='%23C60C30'/%3E%3C/g%3E%3Ctext x='32' y='39' font-family='Pretendard, sans-serif' font-weight='900' font-size='17' fill='%23ffffff' text-anchor='middle' dominant-baseline='middle' letter-spacing='-1'%3E%EC%8B%9C%EC%9E%A5%3C/text%3E%3C/svg%3E">
+    <!-- Pretendard Font -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <style>
+        :root {
+            --primary: #5c6ac4;
+            --secondary: #47c1bf;
+            --background: #f4f6f8;
+            --surface: rgba(255, 255, 255, 0.85);
+            --text-dark: #212b36;
+            --text-light: #637381;
+            --kakao: #FEE500;
+            --kakao-text: #000000;
+            --naver: #03C75A;
+            --naver-text: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-container {
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 2px;
+            white-space: nowrap;
+        }
+        
+        .header-subtitle {
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: 500;
+            margin-left: 36px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .controls {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .search-input, .region-select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus, .region-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(92, 106, 196, 0.2);
+        }
+
+        .search-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .search-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-btn:active { opacity: 0.8; transform: translateY(1px); }
+        
+        .region-select {
+            width: 80px;
+            padding-left: 8px;
+            padding-right: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Loading Spinner */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        /* Market Card */
+        .market-card {
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .market-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .market-card.expanded .card-details {
+            display: block;
+            animation: slideDown 0.3s ease-out forwards;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .card-details { border-top: 1px dashed rgba(255,255,255,0.2); }
+        }
+        
+        .expand-indicator {
+            text-align: center;
+            color: #999;
+            font-size: 0.75rem;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+        .expand-indicator:hover {
+            color: var(--primary);
+        }
+        
+        .expand-indicator svg {
+            transition: transform 0.3s ease;
+        }
+        
+        .market-card.expanded .expand-indicator svg {
+            transform: rotate(180deg);
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .market-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .badge-primary { background: rgba(92, 106, 196, 0.15); color: var(--primary); }
+        .badge-secondary { background: rgba(71, 193, 191, 0.15); color: var(--secondary); }
+        .badge-outline { border: 1px solid rgba(0,0,0,0.1); color: var(--text-dark); }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .badge-blink {
+            background-color: #FF3366 !important;
+            color: white !important;
+            animation: blink 1.2s infinite;
+            box-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+        }
+        
+        .market-address-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .market-address {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: flex-start;
+            gap: 4px;
+            line-height: 1.4;
+            flex: 1;
+            word-break: keep-all;
+        }
+        
+        .address-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        
+        .market-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .meta-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .meta-icon {
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        .meta-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-text strong {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .meta-text span {
+            font-size: 0.75rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            word-break: keep-all;
+            line-height: 1.3;
+        }
+
+        .action-icons {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            gap: 6px;
+            margin-top: 16px;
+            padding-top: 16px;
+            padding-bottom: 8px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+            justify-content: flex-start;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .action-icons::-webkit-scrollbar {
+            display: none;
+        }
+
+        .brand-tag {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            letter-spacing: -0.3px;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+        .brand-tag:active { opacity: 0.7; }
+        
+        .tag-kakao { background-color: #FAE100; color: #3C1E1E; font-family: "Malgun Gothic", sans-serif; }
+        .tag-naver { background-color: #03C75A; color: #FFFFFF; font-family: "Malgun Gothic", sans-serif; }
+        .tag-taxi { background-color: #FAE100; color: #1A1A1C; font-weight: 900;}
+        .tag-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .tag-youtube { background-color: #FF0000; color: white; font-family: "YouTube Sans", "Arial Black", sans-serif; }
+        .tag-blog { background-color: #03C75A; color: #FFFFFF; font-family: "Malgun Gothic", sans-serif; }
+        .tag-ai { background: linear-gradient(135deg, #03C75A, #0072ff); color: #FFFFFF; font-family: "Malgun Gothic", sans-serif; border: 1px solid rgba(0,0,0,0.05); }
+        .tag-yeogi { background-color: #F7323F; color: #FFFFFF; font-weight: bold; }
+
+        /* Floating Action Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 44px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 90;
+        }
+
+        .fab {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            color: #333;
+        }
+        .fab svg {
+            transition: transform 0.3s ease;
+        }
+        .fab:hover {
+            transform: scale(1.05);
+        }
+        .fab:active {
+            transform: scale(0.95);
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .spinning {
+            animation: spin 1s linear infinite;
+        }
+        .gps-active {
+            color: var(--primary) !important;
+            border-color: var(--primary) !important;
+            background: #e8f4ff !important;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 4px;
+            margin-top: -4px;
+            margin-right: 8px;
+            transition: transform 0.2s;
+            color: #ccc;
+            outline: none;
+            display: flex;
+            align-items: center;
+        }
+        .favorite-btn.active {
+            color: #ff4757;
+        }
+        .favorite-btn.active svg {
+            fill: #ff4757;
+            stroke: #ff4757;
+        }
+        .favorite-btn:active {
+            transform: scale(1.2);
+        }
+        
+        .weather-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #555;
+            margin-right: 8px;
+        }
+        .weather-info .w-icon {
+            font-size: 1.35rem;
+        }
+
+        .fav-filter-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            color: #b0b0b0;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+        .fav-filter-btn:hover {
+            color: #ff4757;
+            transform: scale(1.1);
+        }
+        #favFilterBtn.active {
+            color: #ff4757;
+        }
+        #favFilterBtn.active svg {
+            fill: #ff4757;
+            stroke: #ff4757;
+        }
+        #recentFilterBtn:hover {
+            color: var(--primary);
+        }
+        #recentFilterBtn.active {
+            color: var(--primary);
+        }
+        #recentFilterBtn.active svg {
+            fill: none; /* Clock shouldn't be filled, just thicker stroke or color */
+            stroke-width: 2.5;
+        }
+        
+        .title-wrapper {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            background: var(--surface);
+            border-radius: 16px;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 32px 0;
+            padding-bottom: 24px;
+        }
+        .page-btn {
+            background: var(--surface);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .page-btn:hover {
+            background: #f0f0f0;
+        }
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .page-arrow-btn {
+            background: none;
+            border: none;
+            color: #111;
+            padding: 8px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-arrow-btn:hover {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        .page-arrow-btn:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .page-btn:disabled {
+            background: #f9f9f9;
+            color: #ccc;
+            cursor: not-allowed;
+            border-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-top">
+                <div class="header-title-wrapper">
+                    <div class="header-title" style="display: flex; align-items: center; gap: 6px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="1.2em" height="1.2em">
+                            <!-- 낮고 넓은 기와 -->
+                            <path d="M 10 7 Q 32 11 54 7 Q 58 18 64 24 L 0 24 Q 6 18 10 7 Z" fill="#0a2d5c"/>
+                            <!-- 처마 곡선 -->
+                            <path d="M 1 24 A 3 3 0 0 1 7 24 A 3 3 0 0 1 13 24 A 3 3 0 0 1 19 24 A 3 3 0 0 1 25 24 A 3 3 0 0 1 31 24 A 3 3 0 0 1 37 24 A 3 3 0 0 1 43 24 A 3 3 0 0 1 49 24 A 3 3 0 0 1 55 24 A 3 3 0 0 1 61 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+                            <!-- 보 -->
+                            <rect x="2" y="24" width="60" height="4" fill="#0a2d5c"/>
+                            <!-- 기둥 -->
+                            <rect x="14" y="28" width="6" height="22" fill="#0a2d5c"/>
+                            <rect x="44" y="28" width="6" height="22" fill="#0a2d5c"/>
+                            <!-- 받침 -->
+                            <rect x="10" y="50" width="14" height="4" fill="#0a2d5c"/>
+                            <rect x="40" y="50" width="14" height="4" fill="#0a2d5c"/>
+                            <!-- 태극 -->
+                            <circle cx="32" cy="39" r="22" fill="#ffffff"/>
+                            <g transform="rotate(34 32 39)">
+                                <circle cx="32" cy="39" r="21" fill="#0047A0"/>
+                                <path d="M 11 39 a 21 21 0 1 1 42 0 a 10.5 10.5 0 0 0 -21 0 a 10.5 10.5 0 0 1 -21 0" fill="#C60C30"/>
+                            </g>
+                            <!-- 시장 -->
+                            <text x="32" y="39" font-family="Pretendard, sans-serif" font-weight="900" font-size="17" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">시장</text>
+                        </svg>
+                        대한민국 전통 시장 가이드
+                    </div>
+                    <div class="header-subtitle" id="dbInfo">(DB : 데이터 로딩중...)</div>
+                </div>
+                <div class="header-actions">
+                    <button class="fav-filter-btn" id="favFilterBtn" title="즐겨찾기만 보기">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        <span id="favCount" style="margin-left:6px; font-size:0.9rem; font-weight:bold;">0</span>
+                    </button>
+                    <button class="fav-filter-btn" id="recentFilterBtn" title="최근 본 시장">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="controls">
+            <select class="region-select" id="regionSelect">
+                <option value="">전국</option>
+            </select>
+            <div class="search-wrapper">
+                <input type="text" class="search-input" id="searchInput" placeholder="시장 이름 검색...">
+                <button class="search-btn" id="searchBtn" onclick="filterAndRender()">검색</button>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    <main id="marketList">
+        <!-- Content will be injected here -->
+    </main>
+    <div id="pagination" class="pagination-container"></div>
+
+    <footer style="text-align: right; padding: 10px 20px 20px; font-size: 0.7rem; color: white;">
+        Developed by Park, YeonJae
+    </footer>
+
+    <div class="fab-container">
+        <button class="fab" id="gpsBtn" title="내 주변 20km 시장 찾기">
+            <svg id="gpsIcon" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // ==========================================
+        // ==========================================
+        // VWorld API 키 설정 (간단한 문자열 뒤집기 난독화 적용)
+        const _k = '419141F4B129-78EA-40F3-209E-9718A6C4';
+        const VWORLD_API_KEY = _k.split('').reverse().join('');
+        const VWORLD_DOMAIN = 'http://localhost'; // 예: localhost 또는 실제 서비스되는 도메인
+        // ==========================================
+
+        const REGIONS = ['서울', '부산', '대구', '인천', '광주', '대전', '울산', '세종', '경기', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
+        const weatherCache = {}; 
+        
+        const LOCAL_INFO = {
+    // 서울 (25)
+    "서울 종로구": { spots: "경복궁, 북촌한옥마을, 광화문", specialties: "육회, 빈대떡, 마약김밥" },
+    "서울 중구": { spots: "명동, N서울타워, 덕수궁", specialties: "칼국수, 족발, 남대문갈치" },
+    "서울 용산구": { spots: "이태원, 국립중앙박물관", specialties: "해장국, 세계음식" },
+    "서울 성동구": { spots: "서울숲, 카페거리", specialties: "왕십리곱창" },
+    "서울 광진구": { spots: "건대거리, 아차산", specialties: "건대 양꼬치" },
+    "서울 동대문구": { spots: "경동시장, 청량리", specialties: "한약재, 파전" },
+    "서울 중랑구": { spots: "용마랜드, 장미공원", specialties: "동부시장 먹거리" },
+    "서울 성북구": { spots: "길상사, 북악스카이웨이", specialties: "돈암시장 순대" },
+    "서울 강북구": { spots: "북한산, 4.19민주묘지", specialties: "수유시장 먹거리" },
+    "서울 도봉구": { spots: "도봉산, 창동플랫폼", specialties: "방학동 도깨비시장" },
+    "서울 노원구": { spots: "화랑대철도공원, 수락산", specialties: "공릉동 국수거리" },
+    "서울 은평구": { spots: "은평한옥마을, 진관사", specialties: "연신내 불오징어" },
+    "서울 서대문구": { spots: "신촌, 서대문형무소", specialties: "영천시장 꽈배기" },
+    "서울 마포구": { spots: "홍대거리, 망원한강공원", specialties: "망원시장 고로케, 족발" },
+    "서울 양천구": { spots: "목동로데오거리, 파리공원", specialties: "목동 깨비시장 먹거리" },
+    "서울 강서구": { spots: "마곡식물원, 개화산", specialties: "송화시장 칼국수" },
+    "서울 구로구": { spots: "항동철길, 구로디지털", specialties: "남구로시장 중국음식" },
+    "서울 금천구": { spots: "별빛남문시장", specialties: "현대시장 닭강정" },
+    "서울 영등포구": { spots: "여의도한강공원, 63빌딩", specialties: "영등포시장 해산물" },
+    "서울 동작구": { spots: "노량진, 보라매공원", specialties: "노량진 수산물, 컵밥" },
+    "서울 관악구": { spots: "샤로수길, 관악산", specialties: "신림동 백순대" },
+    "서울 서초구": { spots: "예술의전당, 반포한강공원", specialties: "서래마을 디저트" },
+    "서울 강남구": { spots: "코엑스, 가로수길, 강남역", specialties: "영동시장 논현먹자골목" },
+    "서울 송파구": { spots: "롯데월드, 석촌호수", specialties: "가락시장 회, 방이동먹자" },
+    "서울 강동구": { spots: "올림픽공원, 암사유적지", specialties: "암사시장 닭강정" },
+
+    // 부산 (16)
+    "부산 중구": { spots: "용두산공원, 보수동책방골목", specialties: "비빔당면, 씨앗호떡" },
+    "부산 서구": { spots: "송도해수욕장, 케이블카", specialties: "고등어, 암남공원 조개구이" },
+    "부산 동구": { spots: "초량이바구길, 차이나타운", specialties: "초량밀면, 만두" },
+    "부산 영도구": { spots: "태종대, 흰여울문화마을", specialties: "어묵, 곰장어" },
+    "부산 부산진구": { spots: "서면, 시민공원", specialties: "돼지국밥, 서면밀면" },
+    "부산 동래구": { spots: "동래읍성, 온천장", specialties: "동래파전, 꼼장어" },
+    "부산 남구": { spots: "이기대, 오륙도", specialties: "대연동 쌍둥이국밥" },
+    "부산 북구": { spots: "구포시장, 화명생태공원", specialties: "구포국수" },
+    "부산 해운대구": { spots: "해운대, 동백섬, 청사포", specialties: "해운대국밥, 해산물" },
+    "부산 사하구": { spots: "감천문화마을, 다대포", specialties: "장림포구 먹거리" },
+    "부산 금정구": { spots: "범어사, 금정산성", specialties: "산성막걸리, 흑염소" },
+    "부산 강서구": { spots: "가덕도, 낙동강하구", specialties: "명지 대파, 갈미조개" },
+    "부산 연제구": { spots: "연산동고분군, 온천천", specialties: "연산동 해물탕" },
+    "부산 수영구": { spots: "광안리, 민락수변공원", specialties: "광안리 활어회" },
+    "부산 사상구": { spots: "삼락생태공원", specialties: "사상 꼬리곰탕" },
+    "부산 기장군": { spots: "해동용궁사, 아홉산숲", specialties: "기장 미역, 대게" },
+
+    // 대구 (9)
+    "대구 중구": { spots: "김광석거리, 근대골목", specialties: "납작만두, 찜갈비, 막창" },
+    "대구 동구": { spots: "팔공산, 동화사", specialties: "팔공산 갓바위 두부" },
+    "대구 서구": { spots: "서문시장, 달성공원", specialties: "서문시장 칼제비, 호떡" },
+    "대구 남구": { spots: "앞산전망대, 안지랑", specialties: "안지랑 곱창" },
+    "대구 북구": { spots: "EXCO, 경북대거리", specialties: "칠성시장 족발" },
+    "대구 수성구": { spots: "수성못, 국립대구박물관", specialties: "들안길 먹거리" },
+    "대구 달서구": { spots: "이월드, 두류공원", specialties: "평화시장 닭똥집" },
+    "대구 달성군": { spots: "비슬산, 송해공원", specialties: "현풍 곰탕" },
+    "대구 군위군": { spots: "화본역, 한밤마을", specialties: "군위 한우" },
+
+    // 인천 (10)
+    "인천 중구": { spots: "차이나타운, 월미도", specialties: "신포닭강정, 짜장면" },
+    "인천 동구": { spots: "수도국산달동네박물관", specialties: "화평동 세숫대야냉면" },
+    "인천 미추홀구": { spots: "문학경기장, 수봉공원", specialties: "용현동 물텀벙이" },
+    "인천 연수구": { spots: "송도센트럴파크", specialties: "송도 꽃게" },
+    "인천 남동구": { spots: "소래포구, 인천대공원", specialties: "소래포구 새우젓, 꽃게" },
+    "인천 부평구": { spots: "부평지하상가", specialties: "부평 해물탕" },
+    "인천 계양구": { spots: "계양산, 아라뱃길", specialties: "계산동 먹자골목" },
+    "인천 서구": { spots: "청라호수공원, 정서진", specialties: "가좌동 먹거리" },
+    "인천 강화군": { spots: "전등사, 동막해변", specialties: "인삼, 밴댕이, 장어" },
+    "인천 옹진군": { spots: "영흥도, 백령도", specialties: "백령도 냉면, 까나리액젓" },
+
+    // 광주 (5)
+    "광주 동구": { spots: "아시아문화전당, 충장로", specialties: "상추튀김, 육전" },
+    "광주 서구": { spots: "김대중컨벤션센터", specialties: "양동시장 통닭" },
+    "광주 남구": { spots: "펭귄마을, 양림동", specialties: "송정떡갈비" },
+    "광주 북구": { spots: "무등산, 중외공원", specialties: "오리탕, 한정식" },
+    "광주 광산구": { spots: "송정역, 1913송정시장", specialties: "송정떡갈비" },
+
+    // 대전 (5)
+    "대전 동구": { spots: "대동하늘공원, 식장산", specialties: "가락국수" },
+    "대전 중구": { spots: "성심당, 으능정이거리", specialties: "칼국수, 튀김소보로" },
+    "대전 서구": { spots: "한밭수목원, 엑스포광장", specialties: "두부두루치기" },
+    "대전 유성구": { spots: "유성온천, 국립중앙과학관", specialties: "구즉 묵마을 묵밥" },
+    "대전 대덕구": { spots: "대청댐, 동춘당", specialties: "신탄진 쏘가리매운탕" },
+
+    // 울산 (5)
+    "울산 중구": { spots: "태화강국가정원, 십리대숲", specialties: "병영 막창" },
+    "울산 남구": { spots: "장생포고래박물관", specialties: "고래고기" },
+    "울산 동구": { spots: "대왕암공원, 일산해수욕장", specialties: "방어동 방어회" },
+    "울산 북구": { spots: "정자항, 강동몽돌해변", specialties: "정자대게" },
+    "울산 울주군": { spots: "간절곶, 영남알프스", specialties: "언양불고기" },
+
+    // 세종 (1)
+    "세종": { spots: "호수공원, 베어트리파크", specialties: "조치원 복숭아, 파닭" },
+
+    // 경기 (31)
+    "경기 수원시": { spots: "수원화성, 행리단길", specialties: "수원왕갈비, 통닭" },
+    "경기 성남시": { spots: "남한산성, 율동공원", specialties: "모란시장 기름, 분당 카페" },
+    "경기 고양시": { spots: "일산호수공원, 킨텍스", specialties: "일산 칼국수" },
+    "경기 용인시": { spots: "에버랜드, 한국민속촌", specialties: "백암순대" },
+    "경기 부천시": { spots: "한국만화박물관", specialties: "부천 자유시장 먹거리" },
+    "경기 안산시": { spots: "대부도, 오이도", specialties: "바지락칼국수" },
+    "경기 안양시": { spots: "안양예술공원", specialties: "안양 중앙시장 순대곱창" },
+    "경기 남양주시": { spots: "다산생태공원, 두물머리", specialties: "남양주 먹골배" },
+    "경기 화성시": { spots: "제부도, 동탄호수공원", specialties: "송산 포도" },
+    "경기 평택시": { spots: "평택항, 송탄관광특구", specialties: "송탄 부대찌개" },
+    "경기 의정부시": { spots: "의정부제일시장", specialties: "의정부 부대찌개" },
+    "경기 시흥시": { spots: "오이도, 갯골생태공원", specialties: "월곶포구 해산물" },
+    "경기 파주시": { spots: "헤이리마을, 임진각", specialties: "장단콩, 파주장어" },
+    "경기 김포시": { spots: "김포아라마리나", specialties: "김포 금쌀" },
+    "경기 광명시": { spots: "광명동굴", specialties: "광명시장 빈대떡, 칼국수" },
+    "경기 광주시": { spots: "남한산성, 화담숲", specialties: "퇴촌 토마토" },
+    "경기 군포시": { spots: "수리산도립공원", specialties: "산본 중심상가 먹거리" },
+    "경기 오산시": { spots: "물향기수목원", specialties: "오색시장 야시장" },
+    "경기 이천시": { spots: "설봉공원, 테르메덴", specialties: "이천 쌀밥 정식" },
+    "경기 양주시": { spots: "장흥관광지, 나리공원", specialties: "양주 한우" },
+    "경기 안성시": { spots: "안성팜랜드", specialties: "안성맞춤 한우, 국밥" },
+    "경기 구리시": { spots: "동구릉, 장자호수공원", specialties: "구리 곱창" },
+    "경기 포천시": { spots: "산정호수, 허브아일랜드", specialties: "이동갈비, 포천막걸리" },
+    "경기 의왕시": { spots: "백운호수, 왕송호수", specialties: "의왕 한방백숙" },
+    "경기 하남시": { spots: "미사경정공원", specialties: "덕풍시장 오일장" },
+    "경기 여주시": { spots: "신륵사, 여주프리미엄아울렛", specialties: "여주 쌀, 고구마" },
+    "경기 양평군": { spots: "두물머리, 세미원", specialties: "양평 해장국" },
+    "경기 동두천시": { spots: "소요산, 보산동특구", specialties: "동두천 부대볶음" },
+    "경기 과천시": { spots: "서울대공원, 경마공원", specialties: "과천 경마장주변 국밥" },
+    "경기 가평군": { spots: "남이섬, 아침고요수목원", specialties: "잣막걸리, 닭갈비" },
+    "경기 연천군": { spots: "한탄강유원지, 재인폭포", specialties: "연천 율무" },
+
+    // 강원 (18)
+    "강원 춘천시": { spots: "남이섬, 소양강스카이워크", specialties: "닭갈비, 막국수" },
+    "강원 원주시": { spots: "간현관광지, 소금산출렁다리", specialties: "원주 추어탕, 복숭아" },
+    "강원 강릉시": { spots: "경포대, 안목커피거리", specialties: "초당순두부, 커피, 장칼국수" },
+    "강원 동해시": { spots: "망상해변, 묵호항", specialties: "묵호 오징어, 대게" },
+    "강원 태백시": { spots: "태백산, 황지연못", specialties: "물닭갈비, 태백한우" },
+    "강원 속초시": { spots: "속초해변, 설악산", specialties: "닭강정, 아바이순대, 오징어" },
+    "강원 삼척시": { spots: "삼척해양레일바이크", specialties: "삼척 곰치국" },
+    "강원 홍천군": { spots: "비발디파크, 수타사", specialties: "홍천 화로구이, 찰옥수수" },
+    "강원 횡성군": { spots: "웰리힐리파크", specialties: "횡성 한우, 안흥찐빵" },
+    "강원 영월군": { spots: "한반도지형, 청령포", specialties: "영월 칡국수, 다슬기해장국" },
+    "강원 평창군": { spots: "대관령양떼목장, 월정사", specialties: "평창 한우, 메밀막국수" },
+    "강원 정선군": { spots: "정선아리랑시장, 레일바이크", specialties: "곤드레밥, 콧등치기국수" },
+    "강원 철원군": { spots: "고석정, 철원평화전망대", specialties: "철원 오대쌀" },
+    "강원 화천군": { spots: "파로호, 평화의댐", specialties: "산천어, 토마토" },
+    "강원 양구군": { spots: "두타연, 펀치볼", specialties: "양구 시래기" },
+    "강원 인제군": { spots: "원대리자작나무숲", specialties: "인제 빙어, 황태" },
+    "강원 고성군": { spots: "통일전망대, 송지호", specialties: "고성 명태, 도루묵" },
+    "강원 양양군": { spots: "낙산사, 서피비치", specialties: "양양 송이, 연어" },
+
+    // 충북 (11)
+    "충북 청주시": { spots: "청남대, 수암골", specialties: "삼겹살거리, 쫄쫄호떡" },
+    "충북 충주시": { spots: "충주호, 수안보온천", specialties: "충주 사과, 꿩요리" },
+    "충북 제천시": { spots: "청풍호, 의림지", specialties: "약채락, 빨간오뎅" },
+    "충북 보은군": { spots: "속리산, 법주사", specialties: "보은 대추" },
+    "충북 옥천군": { spots: "육영수생가, 장령산", specialties: "옥천 복숭아, 생선국수" },
+    "충북 영동군": { spots: "영동와인터널, 월류봉", specialties: "영동 포도, 와인" },
+    "충북 증평군": { spots: "좌구산휴양림", specialties: "증평 홍삼, 돼지고기" },
+    "충북 진천군": { spots: "농다리, 보탑사", specialties: "진천 쌀, 붕어찜" },
+    "충북 괴산군": { spots: "산막이옛길, 수옥폭포", specialties: "괴산 대학찰옥수수" },
+    "충북 음성군": { spots: "반기문생가, 품바재생예술촌", specialties: "음성 청결고추" },
+    "충북 단양군": { spots: "도담삼봉, 만천하스카이워크", specialties: "마늘떡갈비, 쏘가리매운탕" },
+
+    // 충남 (15)
+    "충남 천안시": { spots: "독립기념관, 아라리오갤러리", specialties: "호두과자, 병천순대" },
+    "충남 공주시": { spots: "공산성, 무령왕릉", specialties: "공주 밤, 밤빵" },
+    "충남 보령시": { spots: "대천해수욕장, 무창포", specialties: "보령 머드, 키조개, 굴" },
+    "충남 아산시": { spots: "외암민속마을, 현충사", specialties: "온양온천 먹거리" },
+    "충남 서산시": { spots: "해미읍성, 간월암", specialties: "서산 어리굴젓, 게국지" },
+    "충남 논산시": { spots: "탑정호, 선샤인랜드", specialties: "논산 딸기" },
+    "충남 계룡시": { spots: "계룡산", specialties: "계룡 팥죽" },
+    "충남 당진시": { spots: "왜목마을, 삽교호", specialties: "기지시줄다리기, 실치회" },
+    "충남 금산군": { spots: "대둔산, 금산인삼시장", specialties: "금산 인삼, 어죽" },
+    "충남 부여군": { spots: "부소산성, 궁남지", specialties: "부여 연잎밥" },
+    "충남 서천군": { spots: "국립생태원, 춘장대해변", specialties: "한산 소곡주, 서천 김" },
+    "충남 청양군": { spots: "칠갑산, 천장호출렁다리", specialties: "청양 구기자, 고추" },
+    "충남 홍성군": { spots: "남당항, 죽도", specialties: "홍성 한우, 새조개" },
+    "충남 예산군": { spots: "예당호, 수덕사", specialties: "예산 사과, 예산시장국수" },
+    "충남 태안군": { spots: "안면도, 꽃지해수욕장", specialties: "태안 게국지, 대하" },
+
+    // 전북 (14)
+    "전북 전주시": { spots: "한옥마을, 전동성당", specialties: "전주비빔밥, 콩나물국밥" },
+    "전북 군산시": { spots: "근대역사박물관, 은파호수", specialties: "짬뽕, 이성당빵, 박대" },
+    "전북 익산시": { spots: "미륵사지, 보석박물관", specialties: "익산 고구마, 황등비빔밥" },
+    "전북 정읍시": { spots: "내장산, 구절초테마공원", specialties: "정읍 한우, 쌍화차" },
+    "전북 남원시": { spots: "광한루원, 지리산", specialties: "남원 추어탕" },
+    "전북 김제시": { spots: "벽골제, 금산사", specialties: "김제 지평선 쌀" },
+    "전북 완주군": { spots: "대둔산, 송광사", specialties: "완주 로컬푸드, 생강" },
+    "전북 진안군": { spots: "마이산, 운일암반일암", specialties: "진안 흑돼지, 홍삼" },
+    "전북 무주군": { spots: "덕유산, 무주구천동", specialties: "무주 어죽, 머루와인" },
+    "전북 장수군": { spots: "장안산, 방화동휴양림", specialties: "장수 한우, 사과" },
+    "전북 임실군": { spots: "임실치즈테마파크", specialties: "임실 치즈" },
+    "전북 순창군": { spots: "강천산, 고추장마을", specialties: "순창 고추장, 한정식" },
+    "전북 고창군": { spots: "고창읍성, 선운사", specialties: "고창 풍천장어, 복분자" },
+    "전북 부안군": { spots: "채석강, 내소사", specialties: "부안 바지락죽, 곰소젓갈" },
+
+    // 전남 (22)
+    "전남 목포시": { spots: "유달산, 해상케이블카", specialties: "세발낙지, 홍어, 민어" },
+    "전남 여수시": { spots: "오동도, 향일암", specialties: "돌산갓김치, 게장, 서대회" },
+    "전남 순천시": { spots: "순천만국가정원, 낙안읍성", specialties: "꼬막정식, 짱뚱어탕" },
+    "전남 나주시": { spots: "나주영상테마파크", specialties: "나주곰탕, 나주배" },
+    "전남 광양시": { spots: "광양매화마을, 백운산", specialties: "광양불고기" },
+    "전남 담양군": { spots: "죽녹원, 메타세쿼이아길", specialties: "담양 떡갈비, 대통밥" },
+    "전남 곡성군": { spots: "섬진강기차마을", specialties: "곡성 멜론, 토란" },
+    "전남 구례군": { spots: "화엄사, 지리산온천", specialties: "구례 산수유, 재첩국" },
+    "전남 고흥군": { spots: "나로우주센터, 소록도", specialties: "고흥 유자, 삼치" },
+    "전남 보성군": { spots: "보성녹차밭, 율포해변", specialties: "보성 녹차, 벌교 꼬막" },
+    "전남 화순군": { spots: "화순고인돌유적, 운주사", specialties: "화순 흑염소, 기정떡" },
+    "전남 장흥군": { spots: "정남진, 편백숲", specialties: "장흥 삼합(한우,표고,관자)" },
+    "전남 강진군": { spots: "다산초당, 청자촌", specialties: "강진 한정식" },
+    "전남 해남군": { spots: "땅끝마을, 두륜산", specialties: "해남 고구마, 떡갈비" },
+    "전남 영암군": { spots: "월출산, 왕인박사유적지", specialties: "영암 무화과, 낙지" },
+    "전남 무안군": { spots: "회산백련지, 톱머리해변", specialties: "무안 낙지, 양파" },
+    "전남 함평군": { spots: "함평엑스포공원", specialties: "함평 나비축제, 한우생고기" },
+    "전남 영광군": { spots: "백수해안도로, 불갑사", specialties: "영광 굴비" },
+    "전남 장성군": { spots: "백양사, 장성호", specialties: "장성 사과, 곶감" },
+    "전남 완도군": { spots: "청해진유적, 명사십리", specialties: "완도 전복, 해조류" },
+    "전남 진도군": { spots: "진도타워, 신비의바닷길", specialties: "진도 홍주, 대파" },
+    "전남 신안군": { spots: "퍼플섬, 천사대교", specialties: "신안 홍어, 천일염" },
+
+    // 경북 (22)
+    "경북 포항시": { spots: "호미곶, 영일대해수욕장", specialties: "포항 과메기, 물회" },
+    "경북 경주시": { spots: "불국사, 황리단길", specialties: "경주빵, 찰보리빵, 쌈밥" },
+    "경북 김천시": { spots: "직지사, 연화지", specialties: "김천 자두, 포도" },
+    "경북 안동시": { spots: "하회마을, 월영교", specialties: "안동찜닭, 간고등어" },
+    "경북 구미시": { spots: "금오산, 동락공원", specialties: "구미 곱창전골" },
+    "경북 영주시": { spots: "부석사, 소수서원", specialties: "영주 한우, 풍기인삼" },
+    "경북 영천시": { spots: "보현산천문대", specialties: "영천 돔배기, 육회" },
+    "경북 상주시": { spots: "경천대, 문장대", specialties: "상주 곶감" },
+    "경북 문경시": { spots: "문경새재", specialties: "문경 오미자, 약돌돼지" },
+    "경북 경산시": { spots: "갓바위, 반곡지", specialties: "경산 대추" },
+    "경북 군위군": { spots: "화본역", specialties: "군위 한우" },
+    "경북 의성군": { spots: "조문국사적지, 고운사", specialties: "의성 마늘, 마늘소" },
+    "경북 청송군": { spots: "주왕산, 주산지", specialties: "청송 사과, 닭백숙" },
+    "경북 영양군": { spots: "수비면 별빛보호구역", specialties: "영양 산나물, 고추" },
+    "경북 영덕군": { spots: "영덕대게거리, 강구항", specialties: "영덕 대게" },
+    "경북 청도군": { spots: "청도프로방스, 와인터널", specialties: "청도 미나리, 반시" },
+    "경북 고령군": { spots: "대가야박물관", specialties: "고령 딸기, 돼지고기" },
+    "경북 성주군": { spots: "성밖숲", specialties: "성주 참외" },
+    "경북 칠곡군": { spots: "다부동전적기념관", specialties: "칠곡 벌꿀" },
+    "경북 예천군": { spots: "회룡포, 곤충생태원", specialties: "예천 한우, 용궁순대" },
+    "경북 봉화군": { spots: "청량산, 분천산타마을", specialties: "봉화 송이, 은어" },
+    "경북 울진군": { spots: "성류굴, 덕구온천", specialties: "울진 대게, 송이" },
+    "경북 울릉군": { spots: "나리분지, 독도", specialties: "울릉 오징어, 명이나물" },
+
+    // 경남 (18)
+    "경남 창원시": { spots: "진해 여좌천, 주남저수지", specialties: "마산 아구찜, 진해콩" },
+    "경남 진주시": { spots: "진주성, 촉석루", specialties: "진주냉면, 진주비빔밥" },
+    "경남 통영시": { spots: "동피랑마을, 케이블카", specialties: "충무김밥, 통영꿀빵, 굴" },
+    "경남 사천시": { spots: "사천해상케이블카", specialties: "사천 쥐치포, 해산물" },
+    "경남 김해시": { spots: "수로왕릉, 클레이아크", specialties: "김해 뒷고기" },
+    "경남 밀양시": { spots: "영남루, 표충사", specialties: "밀양 돼지국밥, 얼음골사과" },
+    "경남 거제시": { spots: "바람의언덕, 외도", specialties: "멍게비빔밥, 거제 멸치" },
+    "경남 양산시": { spots: "통도사, 내원사", specialties: "양산 원동매실, 미나리" },
+    "경남 의령군": { spots: "충익사, 자굴산", specialties: "의령 소바, 망개떡" },
+    "경남 함안군": { spots: "무진정, 입곡군립공원", specialties: "함안 수박" },
+    "경남 창녕군": { spots: "우포늪, 부곡온천", specialties: "창녕 양파, 마늘" },
+    "경남 고성군": { spots: "당항포, 상족암", specialties: "고성 공룡빵, 가리비" },
+    "경남 남해군": { spots: "독일마을, 다랭이마을", specialties: "남해 멸치쌈밥, 마늘" },
+    "경남 하동군": { spots: "쌍계사, 화개장터", specialties: "하동 재첩국, 녹차" },
+    "경남 산청군": { spots: "동의보감촌, 지리산", specialties: "산청 약초, 흑돼지" },
+    "경남 함양군": { spots: "상림공원", specialties: "함양 흑돼지, 연잎밥" },
+    "경남 거창군": { spots: "수승대", specialties: "거창 사과" },
+    "경남 합천군": { spots: "해인사, 합천영상테마파크", specialties: "합천 돼지국밥, 황토한우" },
+
+    // 제주 (2)
+    "제주 제주시": { spots: "용두암, 한라산, 동문시장", specialties: "흑돼지, 고기국수, 오메기떡" },
+    "제주 서귀포시": { spots: "천지연폭포, 중문관광단지", specialties: "갈치조림, 한라봉, 옥돔" },
+    "제주 서귀포": { spots: "천지연폭포, 중문관광단지", specialties: "갈치조림, 한라봉, 옥돔" },
+
+    // Fallbacks
+    "서울": { spots: "경복궁, 명동, 남산타워", specialties: "칼국수, 족발, 육회" },
+    "부산": { spots: "해운대, 광안리, 자갈치시장", specialties: "돼지국밥, 밀면, 씨앗호떡" },
+    "대구": { spots: "동성로, 팔공산, 서문시장", specialties: "막창, 납작만두, 찜갈비" },
+    "인천": { spots: "차이나타운, 월미도", specialties: "짜장면, 닭강정" },
+    "광주": { spots: "무등산, 충장로", specialties: "떡갈비, 상추튀김, 육전" },
+    "대전": { spots: "성심당, 엑스포", specialties: "튀김소보로, 칼국수" },
+    "울산": { spots: "태화강, 장생포", specialties: "고래고기, 언양불고기" },
+    "경기": { spots: "수원화성, 에버랜드", specialties: "수원갈비, 이천쌀" },
+    "강원": { spots: "설악산, 경포대, 남이섬", specialties: "감자, 한우, 막국수" },
+    "충북": { spots: "청남대, 도담삼봉", specialties: "올갱이국, 마늘요리" },
+    "충남": { spots: "대천해수욕장, 궁남지", specialties: "호두과자, 연잎밥" },
+    "전북": { spots: "전주한옥마을, 내장산", specialties: "비빔밥, 콩나물국밥" },
+    "전남": { spots: "순천만, 오동도", specialties: "꼬막, 갓김치, 한정식" },
+    "경북": { spots: "불국사, 하회마을", specialties: "황남빵, 찜닭, 간고등어" },
+    "경남": { spots: "외도, 동피랑, 해인사", specialties: "충무김밥, 꿀빵, 굴" },
+    "제주": { spots: "한라산, 성산일출봉", specialties: "흑돼지, 갈치조림" },
+    "기본": { spots: "지역 전통 명소", specialties: "시장 먹거리" }
+};
+
+        function getLocalInfo(address) {
+            if (!address) return LOCAL_INFO["기본"];
+            
+            const parts = address.split(' ');
+            if (parts.length >= 2) {
+                const p1 = parts[0]; 
+                const p2 = parts[1].replace(/시$|군$|구$/, ''); 
+                
+                let prov = p1;
+                if (prov.includes('서울')) prov = '서울';
+                else if (prov.includes('부산')) prov = '부산';
+                else if (prov.includes('대구')) prov = '대구';
+                else if (prov.includes('인천')) prov = '인천';
+                else if (prov.includes('광주')) prov = '광주';
+                else if (prov.includes('대전')) prov = '대전';
+                else if (prov.includes('울산')) prov = '울산';
+                else if (prov.includes('세종')) prov = '세종';
+                else if (prov.includes('경기')) prov = '경기';
+                else if (prov.includes('강원')) prov = '강원';
+                else if (prov.startsWith('충북') || prov.includes('충청북')) prov = '충북';
+                else if (prov.startsWith('충남') || prov.includes('충청남')) prov = '충남';
+                else if (prov.startsWith('전북') || prov.includes('전라북')) prov = '전북';
+                else if (prov.startsWith('전남') || prov.includes('전라남')) prov = '전남';
+                else if (prov.startsWith('경북') || prov.includes('경상북')) prov = '경북';
+                else if (prov.startsWith('경남') || prov.includes('경상남')) prov = '경남';
+                else if (prov.includes('제주')) prov = '제주';
+                
+                const key1 = `${prov} ${parts[1]}`;
+                const key2 = `${prov} ${p2}`;
+                
+                if (LOCAL_INFO[key1]) return LOCAL_INFO[key1];
+                if (LOCAL_INFO[key2]) return LOCAL_INFO[key2];
+                if (LOCAL_INFO[prov]) return LOCAL_INFO[prov];
+                
+                const shortProv = prov.substring(0,2);
+                if (LOCAL_INFO[shortProv]) return LOCAL_INFO[shortProv];
+            }
+            
+            return LOCAL_INFO["기본"];
+        }
+
+        function checkMarketDay(opnPer) {
+            if (!opnPer || opnPer === '상설' || opnPer === '-' || opnPer === '') return false;
+            
+            const todayStr = String(new Date().getDate());
+            const lastDigit = todayStr[todayStr.length - 1]; 
+            
+            if (opnPer.includes(lastDigit)) return true;
+            if (lastDigit === '0' && (opnPer.includes('0') || opnPer.includes('10'))) return true;
+            
+            return false;
+        }
+
+        const App = {
+            escapeHTML(str) {
+                if (!str) return '';
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            },
+            debounce(func, wait) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            },
+            updateFavoriteCount() {
+                const countEl = document.getElementById('favCount');
+                if (countEl) countEl.textContent = favorites.length;
+            },
+            toggleFavorite(favId, btnElement) {
+                const index = favorites.indexOf(favId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                    btnElement.classList.remove('active');
+                } else {
+                    favorites.push(favId);
+                    btnElement.classList.add('active');
+                }
+                saveFavorites();
+                App.updateFavoriteCount();
+                if (showOnlyFavorites) {
+                    filterAndRender(false);
+                }
+            },
+            addRecent(favId) {
+                const index = recents.indexOf(favId);
+                if (index > -1) {
+                    recents.splice(index, 1);
+                }
+                recents.unshift(favId);
+                if (recents.length > 20) {
+                    recents.pop();
+                }
+                saveRecents();
+            },
+            openKakaoMap(name, lat, lng) {
+                if (!lat || !lng || lat === 'undefined' || lng === 'undefined' || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
+                window.open(`https://map.kakao.com/link/map/${name},${lat},${lng}`, '_blank');
+            },
+            openNaverMap(name, lat, lng) {
+                window.open(`https://map.naver.com/v5/search/${name}`, '_blank');
+            },
+            openNaverParking(lat, lng) {
+                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
+                window.open(`https://map.naver.com/v5/search/주차장?c=${lng},${lat},15,0,0,0,dh`, '_blank');
+            },
+            openTmap(name, lat, lng) {
+                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
+                window.open(`tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}`, '_blank');
+            },
+            openKakaoTaxi(name, lat, lng) {
+                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
+                window.open(`kakaot://taxi/route?epLat=${lat}&epLng=${lng}&epName=${name}`, '_blank');
+            },
+            openInsta(name) {
+                const trimmed = name.replace(/\s+/g, '');
+                window.open(`https://www.instagram.com/explore/tags/${trimmed}/`, '_blank');
+            },
+            openYoutube(name) {
+                window.open(`https://www.youtube.com/results?search_query=${name}+맛집`, '_blank');
+            },
+            openNaverBlog(name) {
+                window.open(`https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${name}+맛집`, '_blank');
+            },
+            openNaverAi(name) {
+                window.open(`https://search.naver.com/search.naver?ssc=tab.ait.all&sm=tab_jum&query=${name}+맛집`, '_blank');
+            },
+            openGoogleImage(name) {
+                window.open(`https://www.google.com/search?tbm=isch&q=${name}`, '_blank');
+            },
+            openYeogi(name) {
+                window.open(`https://www.goodchoice.kr/product/result?keyword=${name}`, '_blank');
+            }
+        };
+
+        // DOM Elements
+        const marketList = document.getElementById('marketList');
+        const searchInput = document.getElementById('searchInput');
+        const regionSelect = document.getElementById('regionSelect');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const favFilterBtn = document.getElementById('favFilterBtn');
+        const recentFilterBtn = document.getElementById('recentFilterBtn');
+
+        // Dynamic Region Select
+        REGIONS.forEach(region => {
+            const opt = document.createElement('option');
+            opt.value = region;
+            opt.textContent = region;
+            regionSelect.appendChild(opt);
+        });
+
+        // State
+        let marketsData = [];
+        let isLoading = false;
+        let favorites = [];
+        let showOnlyFavorites = false;
+        let recents = [];
+        let showOnlyRecents = false;
+        let showOnlyNearby = false;
+        let nearbyMarketsData = [];
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 20;
+
+        // Recents logic
+        function loadRecents() {
+            try {
+                const stored = localStorage.getItem('KOTRA_RECENTS');
+                if (stored) recents = JSON.parse(stored);
+            } catch (e) {}
+        }
+        
+        function saveRecents() {
+            try {
+                localStorage.setItem('KOTRA_RECENTS', JSON.stringify(recents));
+            } catch (e) {}
+        }
+
+        // Favorites logic
+        function getFavId(market) {
+            return market.mrktNm + '|' + market.rdnmadr;
+        }
+        
+        function loadFavorites() {
+            try {
+                const stored = localStorage.getItem('KOTRA_FAVORITES');
+                if (stored) {
+                    favorites = JSON.parse(stored);
+                    App.updateFavoriteCount();
+                }
+            } catch (e) {}
+        }
+        
+        function saveFavorites() {
+            try {
+                localStorage.setItem('KOTRA_FAVORITES', JSON.stringify(favorites));
+            } catch (e) {}
+        }
+
+        // Initialize
+        function init() {
+            loadFavorites();
+            loadRecents();
+            fetchMarkets();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Event Listeners
+        function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            return R * c; 
+        }
+
+        const gpsBtn = document.getElementById('gpsBtn');
+        const gpsIcon = document.getElementById('gpsIcon');
+
+        gpsBtn.addEventListener('click', () => {
+            if (showOnlyNearby) {
+                showOnlyNearby = false;
+                nearbyMarketsData = [];
+                gpsBtn.classList.remove('gps-active');
+                filterAndRender();
+                return;
+            }
+
+            if (!navigator.geolocation) {
+                alert('이 브라우저에서는 위치 정보를 지원하지 않습니다.');
+                return;
+            }
+
+            gpsIcon.classList.add('spinning');
+            
+            navigator.geolocation.getCurrentPosition((position) => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                
+                nearbyMarketsData = marketsData.map(market => {
+                    if (!market.latitude || !market.longitude) return { ...market, distance: 9999 };
+                    const dist = getDistanceFromLatLonInKm(userLat, userLng, parseFloat(market.latitude), parseFloat(market.longitude));
+                    return { ...market, distance: dist };
+                }).filter(market => market.distance <= 20)
+                  .sort((a, b) => a.distance - b.distance);
+
+                gpsIcon.classList.remove('spinning');
+                gpsBtn.classList.add('gps-active');
+                showOnlyNearby = true;
+                
+                showOnlyFavorites = false;
+                showOnlyRecents = false;
+                favFilterBtn.classList.remove('active');
+                recentFilterBtn.classList.remove('active');
+
+                if (nearbyMarketsData.length === 0) {
+                    alert('반경 20km 이내에 시장이 없습니다.');
+                }
+                
+                filterAndRender();
+            }, (error) => {
+                gpsIcon.classList.remove('spinning');
+                alert('위치 정보를 가져오는 데 실패했습니다. 위치 권한을 허용해주세요.');
+            }, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            });
+        });
+        
+        favFilterBtn.addEventListener('click', () => {
+            showOnlyFavorites = !showOnlyFavorites;
+            showOnlyRecents = false;
+            recentFilterBtn.classList.remove('active');
+            
+            if (showOnlyFavorites) {
+                favFilterBtn.classList.add('active');
+            } else {
+                favFilterBtn.classList.remove('active');
+            }
+            filterAndRender();
+        });
+
+        recentFilterBtn.addEventListener('click', () => {
+            showOnlyRecents = !showOnlyRecents;
+            showOnlyFavorites = false;
+            favFilterBtn.classList.remove('active');
+            
+            if (showOnlyRecents) {
+                recentFilterBtn.classList.add('active');
+            } else {
+                recentFilterBtn.classList.remove('active');
+            }
+            filterAndRender();
+        });
+
+        // Search debounce
+        const debouncedFilter = App.debounce(() => filterAndRender(), 300);
+        searchInput.addEventListener('input', debouncedFilter);
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                filterAndRender();
+            }
+        });
+
+        regionSelect.addEventListener('change', filterAndRender);
+
+        // JSONP Request Helper (CORS 이슈를 우회하기 위해 브이월드 자체 JSONP 지원 사용)
+        function fetchJSONP(url) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'vworld_cb_' + Date.now() + Math.floor(Math.random() * 1000);
+                
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve(data);
+                };
+                
+                const script = document.createElement('script');
+                script.src = url + '&callback=' + callbackName;
+                script.onerror = () => {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('네트워크 연결 또는 API 서버 장애로 인해 데이터를 가져올 수 없습니다.'));
+                };
+                document.body.appendChild(script);
+            });
+        }
+
+        // Fetch Data from VWorld
+        async function fetchMarkets() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            renderLoading();
+
+            try {
+                // VWorld 데이터 API 2.0 (LT_P_TRADSIJANG) 호출
+                // API 1회 최대 호출 건수가 1000건이므로 page 파라미터로 나누어서 가져옵니다.
+                const baseUrl = `https://api.vworld.kr/req/data?service=data&version=2.0&request=GetFeature&data=LT_P_TRADSIJANG&key=${VWORLD_API_KEY}&domain=${VWORLD_DOMAIN}&size=1000&geomFilter=BOX(124,33,132,43)&format=json`;
+                
+                // 첫 번째 페이지 데이터 호출
+                const data1 = await fetchJSONP(baseUrl + '&page=1');
+                
+                if (data1.response && data1.response.status === 'OK') {
+                    let allFeatures = data1.response.result.featureCollection.features || [];
+                    
+                    // 1000개가 꽉 차서 왔다면 두 번째 페이지도 호출
+                    if (allFeatures.length === 1000) {
+                        try {
+                            const data2 = await fetchJSONP(baseUrl + '&page=2');
+                            if (data2.response && data2.response.status === 'OK') {
+                                const features2 = data2.response.result.featureCollection.features || [];
+                                allFeatures = allFeatures.concat(features2);
+                            }
+                        } catch (e) {
+                            console.warn('두 번째 페이지 호출 실패', e);
+                        }
+                    }
+                    
+                    // VWorld 응답(GeoJSON 형태)을 내부 형식으로 매핑 (레퍼런스 기준)
+                    marketsData = allFeatures.map(f => {
+                        const props = f.properties || {};
+                        const coords = f.geometry ? f.geometry.coordinates : [0, 0];
+                        
+                        return {
+                            mrktNm: props.name || '이름 없음',
+                            category: props.category || '',
+                            opnPer: props.opn_per || '',
+                            rdnmadr: props.adr_road || props.adr_jibun || '주소 정보 없음',
+                            prdlst: props.items || '정보 없음',
+                            prkplceYn: props.park || 'N',
+                            toiletYn: props.toilet || 'N',
+                            telNum: props.tel_num || '',
+                            marketCnt: props.market || '',
+                            giftcard: props.giftcard || '',
+                            longitude: coords[0],
+                            latitude: coords[1]
+                        };
+                    });
+                    
+                    const now = new Date();
+                    const elDbInfo = document.getElementById('dbInfo');
+                    if (elDbInfo) {
+                        elDbInfo.textContent = `(DB : ${marketsData.length}개 ${now.getFullYear()}년 ${now.getMonth() + 1}월 기준)`;
+                    }
+                    
+                    filterAndRender();
+                } else {
+                    let errMsg = 'API 호출 실패';
+                    if (data1.response && data1.response.error) {
+                        errMsg = data1.response.error.text;
+                    } else if (data1.response && data1.response.status === 'ERROR') {
+                        errMsg = '서버 내부 오류 (API Key 또는 파라미터 확인 필요)';
+                    }
+                    throw new Error(errMsg);
+                }
+            } catch (error) {
+                console.error(error);
+                renderError(error.message + ' (도메인 설정이나 네트워크 상태를 확인해주세요.)');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        // Render Functions
+        function renderLoading() {
+            marketList.innerHTML = `
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text">최신 시장 정보를 불러오는 중입니다...</div>
+                </div>
+            `;
+        }
+
+        function getWeatherEmoji(code) {
+            if (code === 0) return '☀️'; 
+            if (code === 1 || code === 2 || code === 3) return '⛅'; 
+            if (code === 45 || code === 48) return '🌫️'; 
+            if (code >= 51 && code <= 55) return '🌦️'; 
+            if (code >= 61 && code <= 65) return '🌧️'; 
+            if (code >= 71 && code <= 77) return '❄️'; 
+            if (code >= 80 && code <= 82) return '🌧️'; 
+            if (code >= 85 && code <= 86) return '🌨️'; 
+            if (code === 95 || code === 96 || code === 99) return '⛈️'; 
+            return '☁️';
+        }
+
+        async function fetchWeatherForMarkets(marketsToFetch) {
+            if (!marketsToFetch || marketsToFetch.length === 0) return;
+            
+            // 유효한 위경도만 필터링 (0인 경우 제외, 위도는 -90~90 범위)
+            const validMarkets = marketsToFetch.filter(m => 
+                m.latitude && m.longitude && 
+                m.latitude >= -90 && m.latitude <= 90 &&
+                m.longitude >= -180 && m.longitude <= 180 &&
+                (m.latitude !== 0 || m.longitude !== 0)
+            );
+            if (validMarkets.length === 0) return;
+
+            const marketsToFetchApi = [];
+
+            validMarkets.forEach((market) => {
+                const cacheKey = `${market.latitude},${market.longitude}`;
+                const originalIndex = marketsToFetch.indexOf(market);
+                const badge = document.getElementById(`weather-badge-${originalIndex}`);
+                
+                if (weatherCache[cacheKey]) {
+                    // 캐시에 있으면 즉시 렌더링
+                    if (badge) {
+                        const { emoji, temp } = weatherCache[cacheKey];
+                        badge.innerHTML = `<span class="w-icon">${emoji}</span><span>${temp}°C</span>`;
+                        badge.style.display = 'inline-flex';
+                    }
+                } else {
+                    marketsToFetchApi.push(market);
+                }
+            });
+
+            // 모두 캐시에 있으면 종료
+            if (marketsToFetchApi.length === 0) return;
+            
+            const lats = marketsToFetchApi.map(m => m.latitude).join(',');
+            const lons = marketsToFetchApi.map(m => m.longitude).join(',');
+            
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current_weather=true`);
+                if (!res.ok) throw new Error('API fetch error');
+                const data = await res.json();
+                
+                const results = Array.isArray(data) ? data : [data];
+                
+                marketsToFetchApi.forEach((market, index) => {
+                    const originalIndex = marketsToFetch.indexOf(market);
+                    const badge = document.getElementById(`weather-badge-${originalIndex}`);
+                    const weatherData = results[index]?.current_weather;
+                    
+                    if (weatherData) {
+                        const temp = Math.round(weatherData.temperature);
+                        const emoji = getWeatherEmoji(weatherData.weathercode);
+                        
+                        // 캐시에 저장
+                        const cacheKey = `${market.latitude},${market.longitude}`;
+                        weatherCache[cacheKey] = { emoji, temp };
+                        
+                        if (badge) {
+                            badge.innerHTML = `<span class="w-icon">${emoji}</span><span>${temp}°C</span>`;
+                            badge.style.display = 'inline-flex';
+                        }
+                    }
+                });
+            } catch (e) {
+                console.warn('Weather fetch failed', e);
+            }
+        }
+
+        function renderError(message) {
+            marketList.innerHTML = `
+                <div class="empty-state">
+                    <h3 style="margin-bottom:12px;">오류가 발생했습니다</h3>
+                    <p style="margin-bottom:16px;">${message}</p>
+                    <button class="modal-btn" style="padding:10px 20px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="location.reload()">새로고침</button>
+                </div>
+            `;
+        }
+
+        function filterAndRender(resetPage = true) {
+            if (resetPage !== false) {
+                currentPage = 1;
+            }
+            const query = searchInput.value.trim().toLowerCase();
+            const region = regionSelect.value;
+            
+            const baseData = showOnlyNearby ? nearbyMarketsData : marketsData;
+
+            const filtered = baseData.filter(market => {
+                const nameMatch = market.mrktNm && market.mrktNm.toLowerCase().includes(query);
+                
+                let regionMatch = !region;
+                if (region && market.rdnmadr) {
+                    const aliases = {
+                        "충북": ["충북", "충청북"],
+                        "충남": ["충남", "충청남"],
+                        "전북": ["전북", "전라북"],
+                        "전남": ["전남", "전라남"],
+                        "경북": ["경북", "경상북"],
+                        "경남": ["경남", "경상남"]
+                    };
+                    const searchTerms = aliases[region] || [region];
+                    regionMatch = searchTerms.some(term => market.rdnmadr.includes(term));
+                }
+                
+                const favMatch = !showOnlyFavorites || favorites.includes(getFavId(market));
+                const recentMatch = !showOnlyRecents || recents.includes(getFavId(market));
+                
+                return nameMatch && regionMatch && favMatch && recentMatch;
+            });
+
+            if (showOnlyRecents) {
+                filtered.sort((a, b) => {
+                    return recents.indexOf(getFavId(a)) - recents.indexOf(getFavId(b));
+                });
+            }
+
+            const totalItems = filtered.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const pagedMarkets = filtered.slice(startIndex, Math.min(startIndex + ITEMS_PER_PAGE, totalItems));
+
+            renderList(pagedMarkets);
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const paginationEl = document.getElementById('pagination');
+            if (!paginationEl) return;
+            paginationEl.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+            
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = startPage + maxPagesToShow - 1;
+            
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            const firstBtn = document.createElement('button');
+            firstBtn.className = 'page-arrow-btn';
+            firstBtn.textContent = '«';
+            firstBtn.disabled = currentPage === 1;
+            firstBtn.onclick = () => { currentPage = 1; filterAndRender(false); window.scrollTo({top: 0, behavior: 'smooth'}); };
+            paginationEl.appendChild(firstBtn);
+            
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'page-arrow-btn';
+            prevBtn.textContent = '‹';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => { currentPage--; filterAndRender(false); window.scrollTo({top: 0, behavior: 'smooth'}); };
+            paginationEl.appendChild(prevBtn);
+            
+            for (let p = startPage; p <= endPage; p++) {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${p === currentPage ? 'active' : ''}`;
+                btn.textContent = p;
+                btn.onclick = () => { currentPage = p; filterAndRender(false); window.scrollTo({top: 0, behavior: 'smooth'}); };
+                paginationEl.appendChild(btn);
+            }
+            
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'page-arrow-btn';
+            nextBtn.textContent = '›';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => { currentPage++; filterAndRender(false); window.scrollTo({top: 0, behavior: 'smooth'}); };
+            paginationEl.appendChild(nextBtn);
+            
+            const lastBtn = document.createElement('button');
+            lastBtn.className = 'page-arrow-btn';
+            lastBtn.textContent = '»';
+            lastBtn.disabled = currentPage === totalPages;
+            lastBtn.onclick = () => { currentPage = totalPages; filterAndRender(false); window.scrollTo({top: 0, behavior: 'smooth'}); };
+            paginationEl.appendChild(lastBtn);
+        }
+
+        function renderList(markets) {
+            marketList.innerHTML = '';
+            
+            if (markets.length === 0) {
+                marketList.innerHTML = `
+                    <div class="empty-state">
+                        조건에 맞는 시장이 없습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            for (let i = 0; i < markets.length; i++) {
+                const market = markets[i];
+                const card = document.createElement('div');
+                card.className = 'market-card';
+                card.style.animationDelay = `${(i % 10) * 0.05}s`;
+                
+                const name = App.escapeHTML(market.mrktNm);
+                const address = App.escapeHTML(market.rdnmadr || market.lnmadr || '');
+                const items = App.escapeHTML(market.prdlst);
+                const lat = market.latitude;
+                const lng = market.longitude;
+                const favId = getFavId(market);
+                const escapedFavId = App.escapeHTML(favId);
+                
+                // 구(ward/district)를 제외하고 시/도 단위 위주로 외부 검색 쿼리 프리셋 생성
+                const addrParts = (address || '').split(' ');
+                const validParts = addrParts.slice(0, 2).filter(part => !part.endsWith('구'));
+                const regionPrefix = validParts.join(' ');
+                const exactSearchQuery = encodeURIComponent(`${regionPrefix} ${name}`.trim());
+                
+                const categoryBadge = market.category ? `<span class="badge badge-primary">${App.escapeHTML(market.category)}</span>` : '';
+                
+                const isMarketDay = checkMarketDay(market.opnPer);
+                let opnBadge = '';
+                if (isMarketDay) {
+                    opnBadge = `<span class="badge badge-secondary badge-blink">🔥오늘 장날! (${App.escapeHTML(market.opnPer)})</span>`;
+                } else {
+                    opnBadge = market.opnPer && market.opnPer !== '상설' ? `<span class="badge badge-secondary">${App.escapeHTML(market.opnPer)}장</span>` : (market.opnPer === '상설' ? `<span class="badge badge-secondary">상설장</span>` : '');
+                }
+                
+                const localInfo = getLocalInfo(address);
+                
+                const itemsValue = (items && items !== '-' && items.trim() !== '') ? items : '<span style="color:#ccc;">-</span>';
+                const storeCntValue = market.marketCnt ? `${App.escapeHTML(market.marketCnt)}개` : '<span style="color:#ccc;">-</span>';
+                const telValue = (market.telNum && market.telNum !== '-' && market.telNum.trim() !== '') ? `<a href="tel:${App.escapeHTML(market.telNum)}" class="tel-link" data-favid="${escapedFavId}" style="color:var(--primary); text-decoration:none; font-weight:700;">${App.escapeHTML(market.telNum)}</a>` : '<span style="color:#ccc;">-</span>';
+                const prkplceValue = market.prkplceYn === 'Y' ? '<span style="color:var(--primary); font-weight:700;">⭕ 있음</span>' : (market.prkplceYn === 'N' ? '<span style="color:#FF3366; font-weight:700;">❌ 없음</span>' : '<span style="color:#ccc;">-</span>');
+                const toiletValue = market.toiletYn === 'Y' ? '<span style="color:var(--primary); font-weight:700;">⭕ 있음</span>' : (market.toiletYn === 'N' ? '<span style="color:#FF3366; font-weight:700;">❌ 없음</span>' : '<span style="color:#ccc;">-</span>');
+                
+                const isFav = favorites.includes(favId);
+                const heartSvg = `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+                const favClass = isFav ? 'active' : '';
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="title-wrapper" style="align-items: flex-start;">
+                            <button class="favorite-btn ${favClass}" data-favid="${escapedFavId}">${heartSvg}</button>
+                            <div class="market-name" style="display: flex; align-items: center; gap: 6px;">
+                                ${name}
+                                <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="google-img" data-name="${exactSearchQuery}" title="구글 이미지 검색" style="color: #666; display: flex; align-items: center; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.transform='scale(1.1)';" onmouseout="this.style.color='#666'; this.style.transform='scale(1)';">
+                                    <svg width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="badge-group" style="align-items: center;">
+                            <span class="weather-info" id="weather-badge-${i}" style="display:none;"></span>
+                            ${market.distance !== undefined ? `<span class="badge badge-primary" style="background:#4A90E2; border:1px solid #4A90E2;">📍 ${market.distance.toFixed(1)}km</span>` : ''}
+                            ${categoryBadge}
+                            ${opnBadge}
+                        </div>
+                    </div>
+                    <div class="market-address-container">
+                        <div class="market-address">
+                            <span>📍</span> ${address}
+                        </div>
+                        <div class="address-actions">
+                            <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="kakao" data-name="${exactSearchQuery}" data-lat="${lat}" data-lng="${lng}" class="brand-tag tag-kakao" title="카카오맵">KaKao Map</a>
+                            <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="naver" data-name="${exactSearchQuery}" data-lat="${lat}" data-lng="${lng}" class="brand-tag tag-naver" title="네이버지도">Naver Map</a>
+                        </div>
+                    </div>
+
+                    <div class="expand-indicator">
+                        <span>자세히 보기</span>
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                    </div>
+                    <div class="card-details">
+                        <div class="market-meta-grid">
+                        <div class="meta-item full-width">
+                            <span class="meta-icon">🛍️</span>
+                            <div class="meta-text">
+                                <strong>취급품목</strong>
+                                <span>${itemsValue}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🗺️</span>
+                            <div class="meta-text">
+                                <strong>주변명소</strong>
+                                <span>${localInfo.spots}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🎁</span>
+                            <div class="meta-text">
+                                <strong>지역특산품</strong>
+                                <span>${localInfo.specialties}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🏬</span>
+                            <div class="meta-text">
+                                <strong>점포수</strong>
+                                <span>${storeCntValue}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="parking-map" data-lat="${lat}" data-lng="${lng}" class="meta-icon" style="text-decoration:none; cursor:pointer;" title="현 위치 주변 주차장 검색">🅿️</a>
+                            <div class="meta-text">
+                                <strong>주차장</strong>
+                                <span>${prkplceValue}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">🚻</span>
+                            <div class="meta-text">
+                                <strong>공중화장실</strong>
+                                <span>${toiletValue}</span>
+                            </div>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-icon">📞</span>
+                            <div class="meta-text">
+                                <strong>전화번호</strong>
+                                <span>${telValue}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="action-icons">
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="taxi" data-name="${exactSearchQuery}" data-lat="${lat}" data-lng="${lng}" class="brand-tag tag-taxi" title="카카오택시">KaKao T</a>
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="insta" data-name="${exactSearchQuery}" class="brand-tag tag-insta" title="인스타그램">Instagram</a>
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="youtube" data-name="${exactSearchQuery}" class="brand-tag tag-youtube" title="유튜브">YouTube</a>
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="blog" data-name="${exactSearchQuery}" class="brand-tag tag-blog" title="네이버 블로그">Blog</a>
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="ai" data-name="${exactSearchQuery}" class="brand-tag tag-ai" title="AI 맛집 요약">AI 맛집</a>
+                        <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="yeogi" data-name="${exactSearchQuery}" class="brand-tag tag-yeogi" title="여기어때">여기어때</a>
+                    </div>
+                    </div>
+                `;
+
+                // Add Event Listeners programmatically
+                const favBtn = card.querySelector('.favorite-btn');
+                if (favBtn) {
+                    favBtn.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 하위 클릭 이벤트 전파 방지
+                        App.toggleFavorite(favId, this);
+                    });
+                }
+                
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button, .favorite-btn, .brand-tag, .address-actions, .action-icons')) return;
+                    card.classList.toggle('expanded');
+                    const indicatorText = card.querySelector('.expand-indicator span');
+                    if (card.classList.contains('expanded')) {
+                        indicatorText.textContent = '접기';
+                    } else {
+                        indicatorText.textContent = '자세히 보기';
+                    }
+                });
+
+                const telLink = card.querySelector('.tel-link');
+                if (telLink) {
+                    telLink.addEventListener('click', function() {
+                        App.addRecent(favId);
+                    });
+                }
+
+                const actionLinks = card.querySelectorAll('a[data-action]');
+                actionLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        App.addRecent(favId);
+                        const action = this.getAttribute('data-action');
+                        const qName = decodeURIComponent(this.getAttribute('data-name'));
+                        const qLat = this.getAttribute('data-lat');
+                        const qLng = this.getAttribute('data-lng');
+
+                        if (action === 'kakao') App.openKakaoMap(qName, qLat, qLng);
+                        if (action === 'naver') App.openNaverMap(qName, qLat, qLng);
+                        if (action === 'parking-map') App.openNaverParking(qLat, qLng);
+                        if (action === 'tmap') App.openTmap(qName, qLat, qLng);
+                        if (action === 'taxi') App.openKakaoTaxi(qName, qLat, qLng);
+                        if (action === 'insta') App.openInsta(qName);
+                        if (action === 'youtube') App.openYoutube(qName);
+                        if (action === 'blog') App.openNaverBlog(qName);
+                        if (action === 'ai') App.openNaverAi(qName);
+                        if (action === 'yeogi') App.openYeogi(qName);
+                        if (action === 'google-img') App.openGoogleImage(qName);
+                    });
+                });
+
+                fragment.appendChild(card);
+            }
+
+            marketList.appendChild(fragment);
+            
+            // 날씨 정보 비동기 호출 및 업데이트
+            fetchWeatherForMarkets(markets);
+        }
+    </script>
+</body>
+</html>
