@@ -1108,9 +1108,9 @@
                      
                      if (isPermanent && is5Day) {
                          if (checkMarketDay(opnStr)) {
-                             text += `상설장과 함께 오일장이 운영되며, 오늘은 오일장 장날입니다. `;
+                             text += `오늘은 장날입니다. `;
                          } else {
-                             text += `상설장과 함께 오일장이 운영되며, 오늘은 상설장만 열려있습니다. `;
+                             text += `상설장 및 5일장입니다. `;
                          }
                      } else if (isPermanent && !is5Day) {
                          text += `매일 열리는 상설장입니다. `;
