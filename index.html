@@ -1124,15 +1124,40 @@
                         const emoji = weather.emoji;
                         const t = weather.temp !== undefined ? `기온은 ${weather.temp}도이며 ` : '';
                         if (emoji === '🌧️' || emoji === '🌦️') {
-                            text += `현재 날씨는 비가 예상되고 ${t}우산을 준비하세요. `;
+                            const msgs = [
+                                `현재 날씨는 비가 예상되고 ${t}우산을 준비하세요. `,
+                                `현재 비 소식이 있으며 ${t}방문 시 참고하시길 바랍니다. `,
+                                `비가 내릴 수 있으니 ${t}안전한 외출 되시길 바랍니다. `
+                            ];
+                            text += msgs[Math.floor(Math.random() * msgs.length)];
                         } else if (emoji === '☀️') {
-                            text += `현재 날씨는 맑고 쾌청하며 ${t}방문하셔도 좋습니다. `;
+                            const msgs = [
+                                `현재 날씨는 맑고 쾌청하며 ${t}방문하셔도 좋습니다. `,
+                                `현재 아주 맑은 날씨로 ${t}시장 구경하기 딱 좋은 날입니다. `,
+                                `현재 날씨는 맑고 쾌청하며 ${t}외출하기 아주 좋습니다. `
+                            ];
+                            text += msgs[Math.floor(Math.random() * msgs.length)];
                         } else if (emoji === '🌫️') {
-                            text += `현재 날씨는 안개가 끼어 있고 ${t}가시거리에 주의하세요. `;
+                            const msgs = [
+                                `현재 날씨는 안개가 끼어 있고 ${t}가시거리에 주의하세요. `,
+                                `현재 안개가 짙게 끼어 있으니 ${t}이동 시 유의하시길 바랍니다. `,
+                                `안개로 인해 시야가 흐리니 ${t}안전한 방문 되시길 바랍니다. `
+                            ];
+                            text += msgs[Math.floor(Math.random() * msgs.length)];
                         } else if (emoji === '⛅') {
-                            text += `현재 날씨는 구름이 다소 있고 ${t}무난한 날씨입니다. `;
+                            const msgs = [
+                                `현재 날씨는 구름이 다소 있고 ${t}무난한 날씨입니다. `,
+                                `현재 구름이 약간 끼어 있지만 ${t}시장 방문에는 무리가 없습니다. `,
+                                `구름이 조금 있는 무난한 날씨이며 ${t}활동하기 괜찮은 날입니다. `
+                            ];
+                            text += msgs[Math.floor(Math.random() * msgs.length)];
                         } else if (emoji === '❄️') {
-                            text += `눈이 예상되고 ${t}미끄럼에 주의하세요. `;
+                            const msgs = [
+                                `눈이 예상되고 ${t}미끄럼에 주의하세요. `,
+                                `현재 눈이 내리거나 예상되니 ${t}빙판길을 조심하세요. `,
+                                `눈 소식이 있으며 ${t}따뜻하게 입고 안전한 외출 되시길 바랍니다. `
+                            ];
+                            text += msgs[Math.floor(Math.random() * msgs.length)];
                         }
                     }
                 }
