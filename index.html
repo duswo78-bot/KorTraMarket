@@ -284,9 +284,9 @@
 
         .badge-group {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 6px;
-            justify-content: flex-end;
+            align-items: flex-end;
             flex-shrink: 0;
         }
         
@@ -1683,7 +1683,7 @@
                                 ${name}
                             </div>
                         </div>
-                        <div class="badge-group" style="align-items: center;">
+                        <div class="badge-group">
                             <span class="weather-info" id="weather-badge-${i}" style="display:none;"></span>
                             ${categoryBadge}
                             ${opnBadge}
