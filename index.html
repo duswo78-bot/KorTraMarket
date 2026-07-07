@@ -511,6 +511,7 @@
             font-weight: 600;
             color: #555;
             margin-right: 8px;
+            flex-shrink: 0;
         }
         .weather-info .w-icon {
             font-size: 1.35rem;
@@ -1676,19 +1677,19 @@
                 const favClass = isFav ? 'active' : '';
                 
                 card.innerHTML = `
-                    <div class="card-header">
-                        <div class="title-wrapper" style="align-items: flex-start;">
-                            <button class="favorite-btn ${favClass}" data-favid="${escapedFavId}">${heartSvg}</button>
-                            <div class="market-name">
-                                ${name}
+                    <div class="card-header" style="flex-direction: column; gap: 6px;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; align-items: flex-start; gap: 8px;">
+                            <div class="title-wrapper" style="align-items: flex-start;">
+                                <button class="favorite-btn ${favClass}" data-favid="${escapedFavId}">${heartSvg}</button>
+                                <div class="market-name">
+                                    ${name}
+                                </div>
                             </div>
-                        </div>
-                        <div class="badge-group">
                             <span class="weather-info" id="weather-badge-${i}" style="display:none;"></span>
-                            <div style="display: flex; gap: 4px; justify-content: flex-end;">
-                                ${categoryBadge}
-                                ${opnBadge}
-                            </div>
+                        </div>
+                        <div style="display: flex; gap: 4px; justify-content: flex-end; width: 100%;">
+                            ${categoryBadge}
+                            ${opnBadge}
                         </div>
                     </div>
                     <div class="market-address-container">
