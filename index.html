@@ -1265,44 +1265,6 @@
                 }
                 saveRecents();
             },
-            openKakaoMap(name, lat, lng) {
-                if (!lat || !lng || lat === 'undefined' || lng === 'undefined' || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
-                window.open(`https://map.kakao.com/link/map/${name},${lat},${lng}`, '_blank');
-            },
-            openNaverMap(name, lat, lng) {
-                window.open(`https://map.naver.com/v5/search/${name}`, '_blank');
-            },
-            openNaverParking(lat, lng) {
-                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
-                window.open(`https://map.naver.com/v5/search/주차장?c=${lng},${lat},15,0,0,0,dh`, '_blank');
-            },
-            openTmap(name, lat, lng) {
-                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
-                window.open(`tmap://route?goalname=${name}&goalx=${lng}&goaly=${lat}`, '_blank');
-            },
-            openKakaoTaxi(name, lat, lng) {
-                if (!lat || !lng || lat == 0 || lng == 0) { alert('해당 시장의 좌표 정보가 없습니다.'); return; }
-                window.open(`kakaot://taxi/route?epLat=${lat}&epLng=${lng}&epName=${name}`, '_blank');
-            },
-            openInsta(name) {
-                const trimmed = name.replace(/\s+/g, '');
-                window.open(`https://www.instagram.com/explore/tags/${trimmed}/`, '_blank');
-            },
-            openYoutube(name) {
-                window.open(`https://www.youtube.com/results?search_query=${name}+맛집`, '_blank');
-            },
-            openNaverBlog(name) {
-                window.open(`https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${name}+맛집`, '_blank');
-            },
-            openNaverAi(name) {
-                window.open(`https://search.naver.com/search.naver?ssc=tab.ait.all&sm=tab_jum&query=${name}+맛집`, '_blank');
-            },
-            openGoogleImage(name) {
-                window.open(`https://www.google.com/search?tbm=isch&q=${name}`, '_blank');
-            },
-            openYeogi(name) {
-                window.open(`https://www.goodchoice.kr/product/result?keyword=${name}`, '_blank');
-            }
         };
 
         // DOM Elements
@@ -1989,21 +1951,34 @@
                         const qLat = this.getAttribute('data-lat');
                         const qLng = this.getAttribute('data-lng');
 
-                        if (action === 'kakao') App.openKakaoMap(qName, qLat, qLng);
-                        if (action === 'naver') App.openNaverMap(qName, qLat, qLng);
-                        if (action === 'parking-map') App.openNaverParking(qLat, qLng);
-                        if (action === 'tmap') App.openTmap(qName, qLat, qLng);
-                        if (action === 'taxi') App.openKakaoTaxi(qName, qLat, qLng);
-                        if (action === 'insta') App.openInsta(qName);
-                        if (action === 'youtube') App.openYoutube(qName);
-                        if (action === 'blog') App.openNaverBlog(qName);
-                        if (action === 'ai') App.openNaverAi(qName);
-                        if (action === 'yeogi') App.openYeogi(qName);
-                        if (action === 'google-img') App.openGoogleImage(qName);
                         if (action === 'tts') {
                             const mData = this.getAttribute('data-market');
                             if (mData) App.readMarketInfo(mData, this);
+                            return;
                         }
+
+                        const hasCoords = qLat && qLng && qLat !== 'undefined' && qLng !== 'undefined' && qLat != 0 && qLng != 0;
+                        if (['kakao', 'parking-map', 'tmap', 'taxi'].includes(action) && !hasCoords) {
+                            alert('해당 시장의 좌표 정보가 없습니다.');
+                            return;
+                        }
+
+                        const trimmedName = qName.replace(/\s+/g, '');
+                        const urls = {
+                            'kakao': `https://map.kakao.com/link/map/${qName},${qLat},${qLng}`,
+                            'naver': `https://map.naver.com/v5/search/${qName}`,
+                            'parking-map': `https://map.naver.com/v5/search/주차장?c=${qLng},${qLat},15,0,0,0,dh`,
+                            'tmap': `tmap://route?goalname=${qName}&goalx=${qLng}&goaly=${qLat}`,
+                            'taxi': `kakaot://taxi/route?epLat=${qLat}&epLng=${qLng}&epName=${qName}`,
+                            'insta': `https://www.instagram.com/explore/tags/${trimmedName}/`,
+                            'youtube': `https://www.youtube.com/results?search_query=${qName}+맛집`,
+                            'blog': `https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${qName}+맛집`,
+                            'ai': `https://search.naver.com/search.naver?ssc=tab.ait.all&sm=tab_jum&query=${qName}+맛집`,
+                            'google-img': `https://www.google.com/search?tbm=isch&q=${qName}`,
+                            'yeogi': `https://www.goodchoice.kr/product/result?keyword=${qName}`
+                        };
+                        
+                        if (urls[action]) window.open(urls[action], '_blank');
                     });
                 });
 
