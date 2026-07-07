@@ -1191,20 +1191,33 @@
                     }
                 }
                 
-                const msg = new SpeechSynthesisUtterance(text);
-                msg.lang = 'ko-KR';
-                msg.rate = 1.0;
+                const chunks = text.match(/[^.?!]+[.?!]+/g) || [text];
+                let chunkIndex = 0;
                 
-                msg.onend = function() {
-                    if (App.currentTtsBtn === btnEl && btnEl) {
-                        btnEl.classList.remove('tts-playing');
-                        btnEl.style.color = '#666';
-                        App.currentTtsBtn = null;
+                const speakNext = () => {
+                    if (chunkIndex >= chunks.length || App.currentTtsBtn !== btnEl) {
+                        if (App.currentTtsBtn === btnEl && btnEl) {
+                            btnEl.classList.remove('tts-playing');
+                            btnEl.style.color = '#666';
+                            App.currentTtsBtn = null;
+                        }
+                        return;
                     }
+                    
+                    const msg = new SpeechSynthesisUtterance(chunks[chunkIndex]);
+                    msg.lang = 'ko-KR';
+                    msg.rate = 1.0;
+                    
+                    msg.onend = () => {
+                        chunkIndex++;
+                        speakNext();
+                    };
+                    msg.onerror = msg.onend;
+                    
+                    window.speechSynthesis.speak(msg);
                 };
-                msg.onerror = msg.onend;
                 
-                window.speechSynthesis.speak(msg);
+                speakNext();
             },
             escapeHTML(str) {
                 if (!str) return '';
