@@ -1070,6 +1070,7 @@
                     if (App.currentTtsBtn) {
                         const prevBtn = App.currentTtsBtn;
                         prevBtn.classList.remove('tts-playing');
+                        prevBtn.style.color = '#666';
                         App.currentTtsBtn = null;
                         
                         if (prevBtn === btnEl) return;
@@ -1121,16 +1122,17 @@
                     const weather = weatherCache[cacheKey];
                     if (weather) {
                         const emoji = weather.emoji;
+                        const t = weather.temp !== undefined ? `기온은 ${weather.temp}도이며 ` : '';
                         if (emoji === '🌧️' || emoji === '🌦️') {
-                            text += `현재 날씨는 비가 예상되니 우산을 준비하세요. `;
+                            text += `현재 날씨는 비가 예상되고 ${t}우산을 준비하세요. `;
                         } else if (emoji === '☀️') {
-                            text += `현재 날씨는 맑고 쾌청합니다. `;
+                            text += `현재 날씨는 맑고 쾌청하며 ${t}외출하기 좋습니다. `;
                         } else if (emoji === '🌫️') {
-                            text += `현재 날씨는 안개가 끼어 있습니다. `;
+                            text += `현재 날씨는 안개가 끼어 있고 ${t}가시거리에 주의하세요. `;
                         } else if (emoji === '⛅') {
-                            text += `현재 날씨는 구름이 다소 있습니다. `;
+                            text += `현재 날씨는 구름이 다소 있고 ${t}무난한 날씨입니다. `;
                         } else if (emoji === '❄️') {
-                            text += `눈이 예상되니 미끄럼 주의하세요. `;
+                            text += `눈이 예상되고 ${t}미끄럼에 주의하세요. `;
                         }
                     }
                 }
@@ -1142,6 +1144,7 @@
                 msg.onend = function() {
                     if (App.currentTtsBtn === btnEl && btnEl) {
                         btnEl.classList.remove('tts-playing');
+                        btnEl.style.color = '#666';
                         App.currentTtsBtn = null;
                     }
                 };
