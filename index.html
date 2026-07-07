@@ -1100,15 +1100,30 @@
                      text += `${market.mrktType}이고, `;
                 }
                 
-                if (market.opnPer && market.opnPer !== '상설') {
-                     const isMarketDay = checkMarketDay(market.opnPer);
-                     if (isMarketDay) {
-                         text += `오일장으로 오늘이 장날입니다. `;
+                if (market.opnPer) {
+                     const opnStr = market.opnPer.trim();
+                     const isPermanent = opnStr.includes('상설') || opnStr.includes('매일');
+                     const is5Day = /\d/.test(opnStr);
+                     
+                     if (isPermanent && is5Day) {
+                         if (checkMarketDay(opnStr)) {
+                             text += `상설장과 함께 오일장이 운영되며, 오늘은 오일장 장날입니다. `;
+                         } else {
+                             text += `상설장과 함께 오일장이 운영되며, 오늘은 상설장만 열려있습니다. `;
+                         }
+                     } else if (isPermanent && !is5Day) {
+                         text += `매일 열리는 상설장입니다. `;
+                     } else if (!isPermanent && is5Day) {
+                         if (checkMarketDay(opnStr)) {
+                             text += `오일장으로 오늘이 장날입니다. `;
+                         } else {
+                             text += `오일장이며, 오늘은 장날이 아닙니다. `;
+                         }
                      } else {
-                         text += `오늘은 장날이 아닙니다. `;
+                         if (opnStr !== '-' && opnStr !== '') {
+                             text += `${opnStr}장입니다. `;
+                         }
                      }
-                } else if (market.opnPer === '상설') {
-                     text += `상설장입니다. `;
                 }
                 
                 const items = market.trtmntPrdlst;
