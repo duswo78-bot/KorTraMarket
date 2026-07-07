@@ -1096,13 +1096,13 @@
                      text += `${shortAddr}에 위치한 전통시장으로 `;
                 }
                 
-                if (market.mrktType) {
-                     text += `${market.mrktType}이고, `;
+                if (market.category) {
+                     text += `${market.category}이고, `;
                 }
                 
                 if (market.opnPer) {
                      const opnStr = market.opnPer.trim();
-                     const typeStr = (market.mrktType || '').trim();
+                     const typeStr = (market.category || '').trim();
                      const isPermanent = opnStr.includes('상설') || opnStr.includes('매일') || typeStr.includes('상설');
                      const is5Day = /\d/.test(opnStr) || typeStr.includes('5일');
                      
