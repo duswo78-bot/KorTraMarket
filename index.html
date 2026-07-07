@@ -1108,7 +1108,12 @@
                 
                 const items = market.trtmntPrdlst;
                 if (items && items !== '-' && items.trim() !== '') {
-                     text += `취급품목은 ${items}입니다. `;
+                     text += `주요 취급품목은 ${items}입니다. `;
+                }
+                
+                const localInfo = getLocalInfo(address);
+                if (localInfo && localInfo.spots && localInfo.spots !== '정보 없음' && localInfo.spots !== '-') {
+                     text += `추천 주변 명소로는 ${localInfo.spots} 등이 있습니다. `;
                 }
                 
                 if (market.latitude && market.longitude) {
