@@ -418,6 +418,15 @@
         }
         .brand-tag:active { opacity: 0.7; }
         
+        @keyframes blink-blue {
+            0% { color: var(--primary); opacity: 1; }
+            50% { color: #80c0ff; opacity: 0.5; }
+            100% { color: var(--primary); opacity: 1; }
+        }
+        .tts-playing {
+            animation: blink-blue 1.5s infinite !important;
+        }
+        
         .tag-kakao { background-color: #FAE100; color: #3C1E1E; font-family: "Malgun Gothic", sans-serif; }
         .tag-naver { background-color: #03C75A; color: #FFFFFF; font-family: "Malgun Gothic", sans-serif; }
         .tag-taxi { background-color: #FAE100; color: #1A1A1C; font-weight: 900;}
@@ -1048,13 +1057,30 @@
         }
 
         const App = {
-            readMarketInfo(marketStr) {
+            currentTtsBtn: null,
+            readMarketInfo(marketStr, btnEl) {
                 if (!('speechSynthesis' in window)) {
                     alert('이 브라우저에서는 음성 안내 기능을 지원하지 않습니다.');
                     return;
                 }
-                if (window.speechSynthesis.speaking) {
+                
+                if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
                     window.speechSynthesis.cancel();
+                    
+                    if (App.currentTtsBtn) {
+                        const prevBtn = App.currentTtsBtn;
+                        prevBtn.innerHTML = '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                        prevBtn.classList.remove('tts-playing');
+                        App.currentTtsBtn = null;
+                        
+                        if (prevBtn === btnEl) return;
+                    }
+                }
+                
+                App.currentTtsBtn = btnEl;
+                if (btnEl) {
+                    btnEl.classList.add('tts-playing');
+                    btnEl.innerHTML = '<svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>';
                 }
                 
                 const market = JSON.parse(decodeURIComponent(marketStr));
@@ -1109,6 +1135,16 @@
                 const msg = new SpeechSynthesisUtterance(text);
                 msg.lang = 'ko-KR';
                 msg.rate = 1.0;
+                
+                msg.onend = function() {
+                    if (App.currentTtsBtn === btnEl && btnEl) {
+                        btnEl.innerHTML = '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
+                        btnEl.classList.remove('tts-playing');
+                        App.currentTtsBtn = null;
+                    }
+                };
+                msg.onerror = msg.onend;
+                
                 window.speechSynthesis.speak(msg);
             },
             escapeHTML(str) {
@@ -1892,7 +1928,7 @@
                         if (action === 'google-img') App.openGoogleImage(qName);
                         if (action === 'tts') {
                             const mData = this.getAttribute('data-market');
-                            if (mData) App.readMarketInfo(mData);
+                            if (mData) App.readMarketInfo(mData, this);
                         }
                     });
                 });
