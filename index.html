@@ -278,8 +278,8 @@
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 4px;
-            word-break: keep-all;
-            word-wrap: break-word;
+            word-break: break-word;
+            min-width: 0;
         }
 
         .badge-group {
@@ -555,6 +555,7 @@
             align-items: flex-start;
             flex: 1;
             min-width: 0;
+            gap: 8px;
         }
 
         .empty-state {
@@ -1678,7 +1679,7 @@
                     <div class="card-header">
                         <div class="title-wrapper" style="align-items: flex-start;">
                             <button class="favorite-btn ${favClass}" data-favid="${escapedFavId}">${heartSvg}</button>
-                            <div class="market-name" style="display: flex; align-items: center; gap: 6px;">
+                            <div class="market-name">
                                 ${name}
                             </div>
                         </div>
