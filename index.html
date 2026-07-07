@@ -278,6 +278,8 @@
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 4px;
+            word-break: keep-all;
+            word-wrap: break-word;
         }
 
         .badge-group {
@@ -285,6 +287,7 @@
             flex-wrap: wrap;
             gap: 6px;
             justify-content: flex-end;
+            flex-shrink: 0;
         }
         
         .badge {
@@ -547,6 +550,8 @@
         .title-wrapper {
             display: flex;
             align-items: flex-start;
+            flex: 1;
+            min-width: 0;
         }
 
         .empty-state {
