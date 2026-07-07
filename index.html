@@ -1069,7 +1069,6 @@
                     
                     if (App.currentTtsBtn) {
                         const prevBtn = App.currentTtsBtn;
-                        prevBtn.innerHTML = '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
                         prevBtn.classList.remove('tts-playing');
                         App.currentTtsBtn = null;
                         
@@ -1080,7 +1079,6 @@
                 App.currentTtsBtn = btnEl;
                 if (btnEl) {
                     btnEl.classList.add('tts-playing');
-                    btnEl.innerHTML = '<svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" ry="2"></rect></svg>';
                 }
                 
                 const market = JSON.parse(decodeURIComponent(marketStr));
@@ -1138,7 +1136,6 @@
                 
                 msg.onend = function() {
                     if (App.currentTtsBtn === btnEl && btnEl) {
-                        btnEl.innerHTML = '<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>';
                         btnEl.classList.remove('tts-playing');
                         App.currentTtsBtn = null;
                     }
