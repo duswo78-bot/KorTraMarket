@@ -693,9 +693,13 @@
     </main>
     <div id="pagination" class="pagination-container"></div>
 
-    <footer style="text-align: right; padding: 10px 20px 20px; font-size: 0.7rem; color: white;">
+    <footer id="devFooter" style="text-align: right; padding: 10px 20px 20px; font-size: 0.7rem; color: white; cursor: pointer;">
         Developed by Park, YeonJae
     </footer>
+
+    <div id="easterEgg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 1.5s ease; color: white; font-size: 2rem; font-weight: bold; flex-direction: column;">
+        <span id="easterText" style="opacity: 0; transition: opacity 2.5s ease 1s; font-family: 'Georgia', serif; letter-spacing: 2px; text-shadow: 2px 2px 8px rgba(0,0,0,0.8);">Thank you, SS Bae.</span>
+    </div>
 
     <div class="fab-container">
         <button class="fab" id="gpsBtn" title="내 주변 20km 시장 찾기">
@@ -1971,6 +1975,26 @@
             // 날씨 정보 비동기 호출 및 업데이트
             fetchWeatherForMarkets(markets);
         }
+        // Easter Egg Logic
+        document.getElementById('devFooter').addEventListener('click', function() {
+            const egg = document.getElementById('easterEgg');
+            const eggText = document.getElementById('easterText');
+            egg.style.pointerEvents = 'auto';
+            egg.style.opacity = '1';
+            eggText.style.opacity = '1';
+            
+            // Click to dismiss
+            const dismissEgg = function() {
+                egg.style.opacity = '0';
+                eggText.style.opacity = '0';
+                setTimeout(() => {
+                    egg.style.pointerEvents = 'none';
+                }, 1500);
+                egg.removeEventListener('click', dismissEgg);
+            };
+            egg.addEventListener('click', dismissEgg);
+        });
+
     </script>
 </body>
 </html>
