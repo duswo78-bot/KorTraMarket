@@ -253,11 +253,11 @@
             color: var(--primary);
         }
         
-        .expand-indicator svg {
+        .expand-indicator .chevron-icon {
             transition: transform 0.3s ease;
         }
         
-        .market-card.expanded .expand-indicator svg {
+        .market-card.expanded .expand-indicator .chevron-icon {
             transform: rotate(180deg);
         }
         
@@ -1693,13 +1693,13 @@
                     <div class="expand-indicator" style="display: flex; justify-content: space-between; align-items: center; padding: 0 4px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="google-img" data-name="${exactSearchQuery}" title="구글 이미지 검색" style="color: #666; display: flex; align-items: center; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.transform='scale(1.1)';" onmouseout="this.style.color='#666'; this.style.transform='scale(1)';">
-                                <svg width="1.2em" height="1.2em" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                             </a>
-                            ${market.distance !== undefined ? `<span style="color:var(--primary); font-weight:700; font-size:13px; letter-spacing:-0.5px; display: flex; align-items: center; gap: 3px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>${market.distance.toFixed(1)}km</span>` : ''}
+                            ${market.distance !== undefined ? `<span style="color:var(--primary); font-weight:700; font-size:13px; letter-spacing:-0.5px; display: flex; align-items: center; gap: 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>${market.distance.toFixed(1)}km</span>` : ''}
                         </div>
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <span class="indicator-text">자세히 보기</span>
-                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
+                            <svg class="chevron-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
                         </div>
                     </div>
                     <div class="card-details">
