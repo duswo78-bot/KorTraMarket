@@ -1048,6 +1048,69 @@
         }
 
         const App = {
+            readMarketInfo(marketStr) {
+                if (!('speechSynthesis' in window)) {
+                    alert('이 브라우저에서는 음성 안내 기능을 지원하지 않습니다.');
+                    return;
+                }
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                const market = JSON.parse(decodeURIComponent(marketStr));
+                let text = `${market.mrktNm}은 `;
+                
+                const address = market.rdnmadr || market.lnmadr || '';
+                if (address) {
+                     const addrParts = address.split(' ');
+                     const shortAddr = addrParts.slice(0, 2).join(' ');
+                     text += `${shortAddr}에 위치한 전통시장으로 `;
+                }
+                
+                if (market.mrktType) {
+                     text += `${market.mrktType}이고, `;
+                }
+                
+                if (market.opnPer && market.opnPer !== '상설') {
+                     const isMarketDay = checkMarketDay(market.opnPer);
+                     if (isMarketDay) {
+                         text += `오일장으로 오늘이 장날입니다. `;
+                     } else {
+                         text += `오늘은 장날이 아닙니다. `;
+                     }
+                } else if (market.opnPer === '상설') {
+                     text += `상설장입니다. `;
+                }
+                
+                const items = market.trtmntPrdlst;
+                if (items && items !== '-' && items.trim() !== '') {
+                     text += `취급품목은 ${items}입니다. `;
+                }
+                
+                if (market.latitude && market.longitude) {
+                    const cacheKey = `${market.latitude},${market.longitude}`;
+                    const weather = weatherCache[cacheKey];
+                    if (weather) {
+                        const emoji = weather.emoji;
+                        if (emoji === '🌧️' || emoji === '🌦️') {
+                            text += `현재 날씨는 비가 예상되니 우산을 준비하세요. `;
+                        } else if (emoji === '☀️') {
+                            text += `현재 날씨는 맑고 쾌청합니다. `;
+                        } else if (emoji === '🌫️') {
+                            text += `현재 날씨는 안개가 끼어 있습니다. `;
+                        } else if (emoji === '⛅') {
+                            text += `현재 날씨는 구름이 다소 있습니다. `;
+                        } else if (emoji === '❄️') {
+                            text += `눈이 예상되니 미끄럼 주의하세요. `;
+                        }
+                    }
+                }
+                
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'ko-KR';
+                msg.rate = 1.0;
+                window.speechSynthesis.speak(msg);
+            },
             escapeHTML(str) {
                 if (!str) return '';
                 return String(str)
@@ -1707,6 +1770,9 @@
                             <a href="javascript:void(0);" data-favid="${escapedFavId}" data-action="google-img" data-name="${exactSearchQuery}" title="구글 이미지 검색" style="color: #666; display: flex; align-items: center; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.transform='scale(1.1)';" onmouseout="this.style.color='#666'; this.style.transform='scale(1)';">
                                 <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                             </a>
+                            <a href="javascript:void(0);" data-action="tts" data-market="${encodeURIComponent(JSON.stringify(market))}" title="음성 안내 듣기" style="color: #666; display: flex; align-items: center; transition: color 0.2s, transform 0.2s;" onmouseover="this.style.color='var(--primary)'; this.style.transform='scale(1.1)';" onmouseout="this.style.color='#666'; this.style.transform='scale(1)';">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            </a>
                             ${market.distance !== undefined ? `<span style="color:var(--primary); font-weight:700; font-size:13px; letter-spacing:-0.5px; display: flex; align-items: center; gap: 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>${market.distance.toFixed(1)}km</span>` : ''}
                         </div>
                         <div style="display: flex; align-items: center; gap: 4px;">
@@ -1824,6 +1890,10 @@
                         if (action === 'ai') App.openNaverAi(qName);
                         if (action === 'yeogi') App.openYeogi(qName);
                         if (action === 'google-img') App.openGoogleImage(qName);
+                        if (action === 'tts') {
+                            const mData = this.getAttribute('data-market');
+                            if (mData) App.readMarketInfo(mData);
+                        }
                     });
                 });
 
