@@ -1096,13 +1096,10 @@
                      text += `${shortAddr}에 위치한 전통시장으로 `;
                 }
                 
-                if (market.category) {
-                     text += `${market.category}이고, `;
-                }
+                const opnStr = (market.opnPer || '').trim();
+                const typeStr = (market.category || '').trim();
                 
-                if (market.opnPer) {
-                     const opnStr = market.opnPer.trim();
-                     const typeStr = (market.category || '').trim();
+                if (opnStr || typeStr) {
                      const isPermanent = opnStr.includes('상설') || opnStr.includes('매일') || typeStr.includes('상설');
                      const is5Day = /\d/.test(opnStr) || typeStr.includes('5일');
                      
@@ -1121,7 +1118,9 @@
                              text += `오일장이며, 오늘은 장날이 아닙니다. `;
                          }
                      } else {
-                         if (opnStr !== '-' && opnStr !== '') {
+                         if (typeStr && typeStr !== '-') {
+                             text += `${typeStr}입니다. `;
+                         } else if (opnStr && opnStr !== '-') {
                              text += `${opnStr}장입니다. `;
                          }
                      }
