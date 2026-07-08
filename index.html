@@ -540,11 +540,10 @@
         }
         @media (hover: hover) {
             .fav-filter-btn:hover {
-                color: #ff4757;
                 transform: scale(1.1);
             }
             #recentFilterBtn:hover {
-                color: var(--primary);
+                transform: scale(1.1);
             }
         }
         #favFilterBtn.active {
@@ -1275,6 +1274,18 @@
         const searchInput = document.getElementById('searchInput');
         const regionSelect = document.getElementById('regionSelect');
         const refreshBtn = document.getElementById('refreshBtn');
+        
+        // TTS 사용자 이탈시 중단 (메모리 누수 방지)
+        window.addEventListener('beforeunload', () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+        });
         const favFilterBtn = document.getElementById('favFilterBtn');
         const recentFilterBtn = document.getElementById('recentFilterBtn');
 
