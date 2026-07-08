@@ -538,9 +538,14 @@
             justify-content: center;
             outline: none;
         }
-        .fav-filter-btn:hover {
-            color: #ff4757;
-            transform: scale(1.1);
+        @media (hover: hover) {
+            .fav-filter-btn:hover {
+                color: #ff4757;
+                transform: scale(1.1);
+            }
+            #recentFilterBtn:hover {
+                color: var(--primary);
+            }
         }
         #favFilterBtn.active {
             color: #ff4757;
@@ -548,9 +553,6 @@
         #favFilterBtn.active svg {
             fill: #ff4757;
             stroke: #ff4757;
-        }
-        #recentFilterBtn:hover {
-            color: var(--primary);
         }
         #recentFilterBtn.active {
             color: var(--primary);
