@@ -1068,17 +1068,18 @@
                     return;
                 }
                 
-                if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+                const prevBtn = App.currentTtsBtn;
+                if (window.speechSynthesis.speaking || window.speechSynthesis.pending || prevBtn) {
+                    // MUST clear currentTtsBtn before cancel so sync onend doesn't trigger next chunk
+                    App.currentTtsBtn = null;
+                    if (prevBtn) {
+                        prevBtn.classList.remove('tts-playing');
+                        prevBtn.style.color = '#666'; // Reset color just in case
+                    }
+                    
                     window.speechSynthesis.cancel();
                     
-                    if (App.currentTtsBtn) {
-                        const prevBtn = App.currentTtsBtn;
-                        prevBtn.classList.remove('tts-playing');
-                        prevBtn.style.color = '#666';
-                        App.currentTtsBtn = null;
-                        
-                        if (prevBtn === btnEl) return;
-                    }
+                    if (prevBtn === btnEl) return;
                 }
                 
                 App.currentTtsBtn = btnEl;
